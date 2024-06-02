@@ -1,0 +1,7 @@
+{
+  "name": "CmSystem",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
