@@ -1,0 +1,42 @@
+<!-- menu.page.html -->
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Menu</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="centered-buttons">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button class="big-button" expand="full" routerLink="/c1counter">200G/100G Fibers</ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button class="big-button" expand="full" routerLink="/min-sas-counter">MiniSAS</ion-button>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-button class="big-button" expand="full" routerLink="/c3counter">Cat6 Network Cable</ion-button>
+          </ion-col>
+          <ion-col size="6">
+            <ion-button class="big-button" expand="full" routerLink="/c4counter">transceiver 1G:40G</ion-button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+  </ion-content>
+</ion-content>

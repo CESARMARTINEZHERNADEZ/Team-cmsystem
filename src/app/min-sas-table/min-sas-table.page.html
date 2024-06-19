@@ -1,0 +1,94 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="select">
+ 
+    <ion-select placeholder="Select the order of the table" [(ngModel)]="selectedOption" (ionChange)="onOptionChange($event)">
+      <ion-select-option value="option1">A-Z</ion-select-option>
+      <ion-select-option value="option2">Z-A</ion-select-option>
+      <ion-select-option value="option3">Total Max</ion-select-option>
+      <ion-select-option value="option4">Total Min</ion-select-option>
+    </ion-select>
+
+    <div class="butt">
+      <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
+      <ion-button class="buttcounter" routerLink="/min-sas-counter">Counter</ion-button>
+      <ion-button (click)="addConsumable()">Add</ion-button>
+    </div>
+  </div>
+
+  <table>
+    <tr>
+      <th>Consumable</th>
+      <th>Description</th>
+      <th>Part Number</th>
+      <th>Minimum Level</th>
+      <th>Maximum Level</th>
+      <th>Total</th>
+      <th></th>
+    </tr>
+    <tr *ngFor="let consumable of consumables" [ngClass]="{
+      'blue-row': consumable.Total >= consumable.MaximumLevel, 
+      'yellow-row': consumable.Total <= consumable.MinimumLevel
+    }">
+      <td>{{ consumable.Consumable }}</td>
+      <td>{{ consumable.Description }}</td>
+      <td>{{ consumable.PartNumber }}</td>
+      <td>{{ consumable.MinimumLevel }}</td>
+      <td>{{ consumable.MaximumLevel }}</td>
+      <td>{{ consumable.Total }}</td>
+      <td>
+        <ion-icon name="create-outline" class="iconup" (click)="updateConsumable(consumable)"></ion-icon>
+        <ion-icon name="trash-outline" class="icondel" (click)="deleteConsumable(consumable)"></ion-icon>
+      </td>
+    </tr>
+  </table>
+
+
+  <div class="color-legend" style="text-align: center;">
+    <div><span class="color-box blue"></span> Blue: Consumable exceeds maximum level</div>
+    <div><span class="color-box yellow"></span> Green: Consumable is less than or equal to minimum level</div>
+  </div>
+
+  <ion-button (click)="toggleTable()">History</ion-button>
+
+  <ion-select placeholder="Select the order of the history" [(ngModel)]="selectedHistoryOption" (ionChange)="onHistoryOptionChange($event)">
+    <ion-select-option value="dateAsc">Most Recent Date</ion-select-option>
+    <ion-select-option value="dateDesc">Oldest Date</ion-select-option>
+    <ion-select-option value="nameAsc">A-Z Consumable Name</ion-select-option>
+    <ion-select-option value="nameDesc">Z-A Consumable Name</ion-select-option>
+    <ion-select-option value="actionAsc">Action</ion-select-option>
+    <ion-select-option value="userAsc">User</ion-select-option>
+  </ion-select>
+
+  <table *ngIf="showTable">
+    <tr>
+      <th>Consumable</th>
+      <th>Date</th>
+      <th>Action</th>
+      <th>Reason</th>
+      <th>User</th>
+    </tr>
+    <tr *ngFor="let historyItem of paginatedHistory">
+      <td>{{ historyItem.consumable.Consumable }}</td>
+      <td>{{ historyItem.date }}</td>
+      <td>{{ historyItem.action }}</td>
+      <td>{{ historyItem.reason }}</td>
+      <td>{{ historyItem.user.clockNumber }} - {{ historyItem.user.fullName }}</td>
+    </tr>
+  </table>
+
+  <div class="button-container" *ngIf="showTable">
+    <ion-button (click)="previousPage()" [disabled]="currentPage === 1">Previous</ion-button>
+    <ion-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</ion-button>
+  </div>
+</ion-content>
