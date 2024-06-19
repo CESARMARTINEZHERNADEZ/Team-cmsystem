@@ -1,0 +1,33 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large" class="centered-title">Login</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <div class="login-container">
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title class="centered-title">Login</ion-card-title>
+        </ion-card-header>
+  
+        <ion-card-content>
+          <ion-label>Clock Number</ion-label>
+          <ion-input [(ngModel)]="clockNumber" type="text" placeholder="Clock Number"></ion-input>
+          <ion-label>Password</ion-label>
+          <ion-input [(ngModel)]="password" type="password" placeholder="Password"></ion-input>
+  
+          <ion-button expand="full" (click)="login()">Login</ion-button>
+          <ion-button expand="full" fill="outline" (click)="navigateToSignIn()">Sign in</ion-button>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </ion-content>
+</ion-content>
