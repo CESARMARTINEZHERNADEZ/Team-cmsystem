@@ -33,6 +33,12 @@ export class SigninPage implements OnInit {
       return;
     }
   
+    if (!this.fullName || !this.clockNumber || !this.password || !this.confirmPassword || !this.email || !this.confirmEmail) {
+      console.error('Please fill in all fields');
+      alert('Please fill in all fields');
+      return;
+    }
+  
     // Validate the password
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
     if (!passwordRegex.test(this.password)) {
@@ -40,6 +46,7 @@ export class SigninPage implements OnInit {
       alert('Password must have at least 6 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character.');
       return;
     }
+
   
     const newUser = {
       fullName: this.fullName,
@@ -51,15 +58,30 @@ export class SigninPage implements OnInit {
     this.firebaseService.setCollection('usuarios', newUser)
       .then(() => {
         console.log('User registered successfully');
+        alert('User registered successfully');
         this.router.navigate(['/login']);
+        this.clearForm();
       })
       .catch(error => {
         console.error('Error registering user:', error);
       });
+
+      
   }
   
+
+
   navigateToLogin() {
     this.router.navigate(['/login']);
+  }
+
+  clearForm() {
+    this.fullName = '';
+    this.clockNumber = '';
+    this.password = '';
+    this.confirmPassword = '';
+    this.email = '';
+    this.confirmEmail = '';
   }
   async showPasswordAlert() {
     const alert = await this.alertController.create({

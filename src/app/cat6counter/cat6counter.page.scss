@@ -1,0 +1,42 @@
+.centered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80%;
+}
+
+.centered-table {
+    width: 100%;
+    border: 2px solid gray;
+    box-sizing: border-box;
+}
+
+.scan-input {
+    width: 100%;
+    border: 2px solid gray;
+    box-sizing: border-box;
+    display: flex;
+}
+
+@media (min-width: 768px) {
+    .centered-table {
+        width: 50%;
+    }
+}
+
+.centered-table ion-col {
+    max-width: 150px;
+}
+
+.centered-title {
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.menu-button {
+    margin-right: 10px;
+}

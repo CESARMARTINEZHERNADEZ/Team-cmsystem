@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
-import { FirebaseService } from '../services/firebase.service';
+import { FirebaseService } from '../services/firebase.servicetest';
 import { UserService } from '../services/User.Service';
 import { Router } from '@angular/router';
 
@@ -14,7 +14,7 @@ export class C1counterPage implements OnInit {
   public filteredConsumables: any[] = [];
   public partNumber: string = '';
   private alertShown: { [id: string]: boolean } = {};
-
+  
   constructor(
     public alertController: AlertController,
     private firebaseService: FirebaseService,
@@ -40,26 +40,38 @@ export class C1counterPage implements OnInit {
   }
 
   async checkLevels(consumable: any, action: string) {
-    const total = consumable.Total;
+    const SubTotal = consumable.SubTotal;
     const minLevel = consumable.MinimumLevel;
     const maxLevel = consumable.MaximumLevel;
 
     let alertLevel = '';
 
     if (action === 'decrease') {
-      if (total === 0) {
+      if (SubTotal === 0) {
         alertLevel = 'zero';
-      } else if (total <= minLevel * 0.15) {
+      } else if (SubTotal <= minLevel * 0.15) {
         alertLevel = 'low_1';
-      } else if (total <= minLevel * 0.50) {
+      } else if (SubTotal <= minLevel * 0.50) {
         alertLevel = 'low_50%';
-      } else if (total <= minLevel) {
+      } else if (SubTotal <= minLevel) {
         alertLevel = 'low';
+      } else if (SubTotal <= minLevel * 1.20) {
+        alertLevel = 'high_20%';
+      }else if (SubTotal <= minLevel * 2.40) {
+        alertLevel = 'high_40%';
+      }else if (SubTotal <= minLevel * 3.60) {
+        alertLevel = 'high_60%';
+      } else if (SubTotal <= minLevel * 4.80) {
+        alertLevel = 'high_80%';
       }
+      
+
+
+
     } else if (action === 'increase') {
-      if (total >= maxLevel) {
+      if (SubTotal >= maxLevel) {
         alertLevel = 'high';
-      } else if (total >= maxLevel * 0.75) {
+      } else if (SubTotal >= maxLevel * 0.75) {
         alertLevel = 'high_75%';
       }
     }
@@ -86,6 +98,18 @@ export class C1counterPage implements OnInit {
         break;
       case 'low_50%':
         message = `The consumable "${consumable.Consumable}" is at 50% of the minimum level. Please consider ordering more.`;
+        break;
+      case 'high_20%':
+        message = `The consumable "${consumable.Consumable}" is 20% away from reaching the minimum level. Please check stock.`;
+        break;
+      case 'high_40%':
+        message = `The consumable "${consumable.Consumable}" is 40% away from reaching the minimum level. Please check stock.`;
+        break;
+      case 'high_60%':
+        message = `The consumable "${consumable.Consumable}" is 60% away from reaching the minimum level. Please check stock.`;
+        break;
+      case 'high_80%':
+        message = `The consumable "${consumable.Consumable}" is 80% away from reaching the minimum level. Please check stock.`;
         break;
       case 'high_75%':
         message = `The consumable "${consumable.Consumable}" is at 75% of the maximum level. Please monitor stock.`;
@@ -169,12 +193,12 @@ export class C1counterPage implements OnInit {
 
     const updatedConsumable = {
       ...consumable,
-      Total: newTotal
+      SubTotal: newTotal
     };
 
     this.firebaseService.update(`consumables/${consumable.Id}`, updatedConsumable)
       .then(() => {
-        consumable.Total = newTotal;
+        consumable.SubTotal = newTotal;
         this.checkLevels(consumable, action);
       })
       .catch((error) => {
@@ -183,12 +207,12 @@ export class C1counterPage implements OnInit {
   }
 
   increment(consumable: any) {
-    const newTotal = consumable.Total + 1;
+    const newTotal = consumable.SubTotal + 1;
     this.updateTotal(consumable, newTotal, 'increase');
   }
 
   decrement(consumable: any) {
-    const newTotal = consumable.Total - 1;
+    const newTotal = consumable.SubTotal - 1;
     if (newTotal >= 0) {
       this.updateTotal(consumable, newTotal, 'decrease');
     }

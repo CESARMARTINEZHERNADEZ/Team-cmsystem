@@ -5,11 +5,11 @@ import { Router } from '@angular/router';
 import { UserService } from '../services/User.Service'; 
 
 @Component({
-  selector: 'app-c1table',
-  templateUrl: './c1table.page.html',
-  styleUrls: ['./c1table.page.scss'],
+  selector: 'app-cat6table',
+  templateUrl: './cat6table.page.html',
+  styleUrls: ['./cat6table.page.scss'],
 })
-export class C1tablePage implements OnInit {
+export class Cat6tablePage implements OnInit {
   public consumables: any[];
   public selectedOption: string;
   public selectedHistoryOption: string;
@@ -40,7 +40,7 @@ export class C1tablePage implements OnInit {
     this.selectedHistoryOption = 'actionAsc'; 
      
 
-    this.firebaseService.getCollection('HistoryC1').subscribe((historyData: any[]) => {
+    this.firebaseService.getCollection('HistoryCat6').subscribe((historyData: any[]) => {
       
       this.History = historyData.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
@@ -77,7 +77,7 @@ export class C1tablePage implements OnInit {
   }
 
   loadConsumables() {
-    this.firebaseService.getCollection('consumables').subscribe((data: any[]) => {
+    this.firebaseService.getCollection('Cat6').subscribe((data: any[]) => {
       this.consumables = data;
       this.sortConsumables();
     });
@@ -176,7 +176,7 @@ export class C1tablePage implements OnInit {
         { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level' },
         { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level' },
         { name: 'subtotal', type: 'number', placeholder: 'Total' },
-        
+   
       ],
       buttons: [
         { text: 'CANCEL', role: 'cancel' },
@@ -192,7 +192,7 @@ export class C1tablePage implements OnInit {
               MinimumLevel: +data.minimumLevel,
               MaximumLevel: +data.maximumLevel,
               SubTotal: +data.subtotal,
-             
+           
             };
             const actionAlert = await this.alertController.create({
               header: `Explain the reason for adding ${data.consumable}`,
@@ -202,7 +202,7 @@ export class C1tablePage implements OnInit {
                 {
                   text: 'ACCEPT',
                   handler: async (reasonData) => {
-                    this.firebaseService.setHistory('HistoryC1', {
+                    this.firebaseService.setHistory('HistoryCat6', {
                       user: this.userService.getUser(), 
                       reason: reasonData.reason,
                       date: new Date(),
@@ -210,7 +210,7 @@ export class C1tablePage implements OnInit {
                       consumable: newConsumable
                     });
 
-                    this.firebaseService.setCollectionWithId('consumables', newId, newConsumable)
+                    this.firebaseService.setCollectionWithId('Cat6', newId, newConsumable)
                       .then(() => this.loadConsumables())
                       .catch((error) => console.error('Error adding consumable:', error));
                   }
@@ -248,7 +248,7 @@ export class C1tablePage implements OnInit {
                 { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level', value: consumable.MinimumLevel.toString() },
                 { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level', value: consumable.MaximumLevel.toString() },
                 { name: 'subtotal', type: 'number', placeholder: 'Total', value: consumable.SubTotal.toString() },
-                
+              
               ],
               buttons: [
                 { text: 'CANCEL', role: 'cancel' },
@@ -263,10 +263,10 @@ export class C1tablePage implements OnInit {
                       MinimumLevel: +data.minimumLevel,
                       MaximumLevel: +data.maximumLevel,
                       SubTotal: +data.subtotal,
-                      
+                     
                     };
 
-                    this.firebaseService.setHistory('HistoryC1', {
+                    this.firebaseService.setHistory('HistoryCat6', {
                       user: this.userService.getUser(),
                       reason: reasonData.reason,
                       date: new Date(),
@@ -274,7 +274,7 @@ export class C1tablePage implements OnInit {
                       consumable: updatedConsumable
                     });
 
-                    this.firebaseService.update(`consumables/${consumable.Id}`, updatedConsumable)
+                    this.firebaseService.update(`Cat6/${consumable.Id}`, updatedConsumable)
                       .then(() => this.loadConsumables())
                       .catch((error) => console.error('Error updating consumable:', error));
                   }
@@ -304,7 +304,7 @@ export class C1tablePage implements OnInit {
           handler: async (reasonData) => {
 																			 
 						   
-            await this.firebaseService.setHistory('HistoryC1', {
+            await this.firebaseService.setHistory('HistoryCat6', {
               user: this.userService.getUser(),
               reason: reasonData.reason,
               date: new Date(),
@@ -320,7 +320,7 @@ export class C1tablePage implements OnInit {
                 {
                   text: 'DELETE',
                   handler: () => {
-                    this.firebaseService.deleteDocument('consumables', consumable.Id)
+                    this.firebaseService.deleteDocument('Cat6', consumable.Id)
                       .then(() => this.loadConsumables())
                       .catch((error) => console.error('Error deleting consumable:', error));
                   }
@@ -362,7 +362,7 @@ export class C1tablePage implements OnInit {
       const quantity = this.consumableQuantities[id];
       const updatedTotal = consumable.SubTotal + parseInt(quantity, 10);
   
-      this.firebaseService.setCollectionWithId('totalFibers', consumable.Id, {
+      this.firebaseService.setCollectionWithId('totalCat6', consumable.Id, {
         ...consumable,
         Total: updatedTotal
       })
@@ -371,7 +371,7 @@ export class C1tablePage implements OnInit {
   }
   
   loadTotalFibers() {
-    this.firebaseService.getCollection('totalFibers').subscribe((data: any[]) => {
+    this.firebaseService.getCollection('totalCat6').subscribe((data: any[]) => {
       this.totalFibers = data;
     });
   }
@@ -421,17 +421,17 @@ export class C1tablePage implements OnInit {
         Date: new Date()
       };
       
-      this.firebaseService.setCollectionWithId('lendFibers', this.firebaseService.firestore.createId(), newLendFiber)
+      this.firebaseService.setCollectionWithId('lendCat6', this.firebaseService.firestore.createId(), newLendFiber)
         .then(() => {
-          console.log(`Updated lend fiber: ${newLendFiber.Consumable}`);
+          console.log(`Updated lend Cat6: ${newLendFiber.Consumable}`);
           this.loadLendFibers();
         })
-        .catch((error) => console.error('Error updating lend fibers:', error));
+        .catch((error) => console.error('Error updating lend Cat6:', error));
     });
   }
 
   loadLendFibers() {
-    this.firebaseService.getCollection('lendFibers').subscribe((data: any[]) => {
+    this.firebaseService.getCollection('lendCat6').subscribe((data: any[]) => {
       this.lendFibers = data.map((item) => {
         const timestamp = item.Date.seconds * 1000 + item.Date.nanoseconds / 1000000;
         const date = new Date(timestamp);

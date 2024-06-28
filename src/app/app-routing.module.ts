@@ -43,6 +43,22 @@ const routes: Routes = [
     path: 'min-sas-table',
     loadChildren: () => import('./min-sas-table/min-sas-table.module').then( m => m.MinSasTablePageModule)
   },
+  {
+    path: 'cat6counter',
+    loadChildren: () => import('./cat6counter/cat6counter.module').then( m => m.Cat6counterPageModule)
+  },
+  {
+    path: 'cat6table',
+    loadChildren: () => import('./cat6table/cat6table.module').then( m => m.Cat6tablePageModule)
+  },
+  {
+    path: 'transceivercounter',
+    loadChildren: () => import('./transceivercounter/transceivercounter.module').then( m => m.TransceivercounterPageModule)
+  },
+  {
+    path: 'transceivertable',
+    loadChildren: () => import('./transceivertable/transceivertable.module').then( m => m.TransceivertablePageModule)
+  },
  
   
 

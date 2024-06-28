@@ -5,11 +5,11 @@ import { UserService } from '../services/User.Service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-min-sas-counter',
-  templateUrl: './min-sas-counter.page.html',
-  styleUrls: ['./min-sas-counter.page.scss'],
+  selector: 'app-cat6counter',
+  templateUrl: './cat6counter.page.html',
+  styleUrls: ['./cat6counter.page.scss'],
 })
-export class MinSasCounterPage implements OnInit {
+export class Cat6counterPage implements OnInit {
   public consumables: any[] = [];
   public filteredConsumables: any[] = [];
   public partNumber: string = '';
@@ -64,6 +64,7 @@ export class MinSasCounterPage implements OnInit {
       } else if (SubTotal <= minLevel * 4.80) {
         alertLevel = 'high_80%';
       }
+      
 
 
 
@@ -152,7 +153,7 @@ export class MinSasCounterPage implements OnInit {
             }
 
             const action = level.includes('low') || level === 'zero' ? 'decrease' : 'increase';
-            this.firebaseService.setHistory('HistoryMiniSas', {
+            this.firebaseService.setHistory('HistoryCat6', {
               user: this.userService.getUser(),
               reason: data.reason,
               date: new Date(),
@@ -169,7 +170,7 @@ export class MinSasCounterPage implements OnInit {
   }
 
   loadConsumables() {
-    this.firebaseService.getCollection('MiniSAS').subscribe((data: any[]) => {
+    this.firebaseService.getCollection('Cat6').subscribe((data: any[]) => {
       this.consumables = data;
       this.filterConsumables();
     });
@@ -195,7 +196,7 @@ export class MinSasCounterPage implements OnInit {
       SubTotal: newTotal
     };
 
-    this.firebaseService.update(`MiniSAS/${consumable.Id}`, updatedConsumable)
+    this.firebaseService.update(`Cat6/${consumable.Id}`, updatedConsumable)
       .then(() => {
         consumable.SubTotal = newTotal;
         this.checkLevels(consumable, action);

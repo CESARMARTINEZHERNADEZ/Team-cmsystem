@@ -14,8 +14,17 @@ export class MinSasTablePage implements OnInit {
   public consumables: any[];
   public selectedOption: string;
   public selectedHistoryOption: string;
+  public selectedConsumables: any = {};
+  public consumableQuantities: any = {}; 
+  public totalFibers: any[] = [];
+  public showTotalFibers: boolean = false;
+  public lendFibers: any[] = [];
+  public showLendFibers: boolean = false;
+  public selectedConsumableslend: any[] = [];
+
   History: any[] = [];
   showTable = false;
+  showDB = false;
   itemsPerPage = 20;
   currentPage = 1;
   paginatedHistory: any[] = [];
@@ -26,15 +35,19 @@ export class MinSasTablePage implements OnInit {
     private firebaseService: FirebaseService,
     private userService: UserService, 
     private router: Router
-  ) { 
+  ) {
     this.consumables = [];
     this.selectedOption = 'option1';
-    this.selectedHistoryOption = 'dateDesc'; 
+    this.selectedHistoryOption = 'actionAsc'; 
+     
+
     this.firebaseService.getCollection('HistoryMiniSas').subscribe((historyData: any[]) => {
+      
       this.History = historyData.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
         const date = new Date(timestamp);
         const formattedDate = date.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
+
         return {
           ...item,
           date: formattedDate,
@@ -43,16 +56,25 @@ export class MinSasTablePage implements OnInit {
       this.totalPages = Math.ceil(this.History.length / this.itemsPerPage);
       this.sortHistory();
       this.updatePagination();
+      
     });
+    this.loadLendFibers();
   }
+
+
+
 
   ngOnInit() {
     const user = this.userService.getUser();
     if (!user) {
       this.router.navigate(['/login']);
     }
-    else {this.loadConsumables();
-      this.sortHistory();}
+    else {
+      this.loadConsumables();
+      this.sortHistory();
+      this.loadTotalFibers();
+      this.loadLendFibers();			 
+    }
   }
 
   loadConsumables() {
@@ -71,10 +93,10 @@ export class MinSasTablePage implements OnInit {
         this.consumables.sort((a, b) => b.Consumable.localeCompare(a.Consumable));
         break;
       case 'option3':
-        this.consumables.sort((a, b) => b.Total - a.Total);
+        this.consumables.sort((a, b) => b.SubTotal - a.SubTotal);
         break;
       case 'option4':
-        this.consumables.sort((a, b) => a.Total - b.Total);
+        this.consumables.sort((a, b) => a.SubTotal - b.SubTotal);
         break;
     }
   }
@@ -92,12 +114,6 @@ export class MinSasTablePage implements OnInit {
       case 'nameDesc':
         this.History.sort((a, b) => b.consumable.Consumable.localeCompare(a.consumable.Consumable));
         break;
-      case 'dateAsc':
-        this.History.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-        break;
-      case 'dateDesc':
-        this.History.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        break;
       case 'actionAsc':
         this.History.sort((a, b) => a.action.localeCompare(b.action));
         break;
@@ -105,10 +121,11 @@ export class MinSasTablePage implements OnInit {
         this.History.sort((a, b) => a.user.fullName.localeCompare(b.user.fullName));
         break;
       default:
-        this.History.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        case 'actionAsc':
+        this.History.sort((a, b) => a.action.localeCompare(b.action));
         break;
     }
-
+  
     this.updatePagination();
   }
 
@@ -119,6 +136,14 @@ export class MinSasTablePage implements OnInit {
 
   toggleTable() {
     this.showTable = !this.showTable;
+  }
+
+  toggleDB() {
+    this.showDB = !this.showDB;
+  }
+  
+  toggleTotalFibers() {
+    this.showTotalFibers = !this.showTotalFibers;
   }
 
   previousPage() {
@@ -151,7 +176,8 @@ export class MinSasTablePage implements OnInit {
         { name: 'partNumber', type: 'text', placeholder: 'Part Number' },
         { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level' },
         { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level' },
-        { name: 'total', type: 'number', placeholder: 'Total' }
+        { name: 'subtotal', type: 'number', placeholder: 'Total' },
+       
       ],
       buttons: [
         { text: 'CANCEL', role: 'cancel' },
@@ -166,7 +192,8 @@ export class MinSasTablePage implements OnInit {
               PartNumber: data.partNumber,
               MinimumLevel: +data.minimumLevel,
               MaximumLevel: +data.maximumLevel,
-              Total: +data.total
+              SubTotal: +data.subtotal,
+            
             };
             const actionAlert = await this.alertController.create({
               header: `Explain the reason for adding ${data.consumable}`,
@@ -177,7 +204,7 @@ export class MinSasTablePage implements OnInit {
                   text: 'ACCEPT',
                   handler: async (reasonData) => {
                     this.firebaseService.setHistory('HistoryMiniSas', {
-                      user: user, 
+                      user: this.userService.getUser(), 
                       reason: reasonData.reason,
                       date: new Date(),
                       action: 'add',
@@ -221,7 +248,8 @@ export class MinSasTablePage implements OnInit {
                 { name: 'partNumber', type: 'text', placeholder: 'Part Number', value: consumable.PartNumber },
                 { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level', value: consumable.MinimumLevel.toString() },
                 { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level', value: consumable.MaximumLevel.toString() },
-                { name: 'total', type: 'number', placeholder: 'Total', value: consumable.Total.toString() }
+                { name: 'subtotal', type: 'number', placeholder: 'Total', value: consumable.SubTotal.toString() },
+              
               ],
               buttons: [
                 { text: 'CANCEL', role: 'cancel' },
@@ -235,11 +263,12 @@ export class MinSasTablePage implements OnInit {
                       PartNumber: data.partNumber,
                       MinimumLevel: +data.minimumLevel,
                       MaximumLevel: +data.maximumLevel,
-                      Total: +data.total
+                      SubTotal: +data.subtotal,
+                      
                     };
 
                     this.firebaseService.setHistory('HistoryMiniSas', {
-                      user: user, 
+                      user: this.userService.getUser(),
                       reason: reasonData.reason,
                       date: new Date(),
                       action: 'update',
@@ -274,8 +303,10 @@ export class MinSasTablePage implements OnInit {
         {
           text: 'NEXT',
           handler: async (reasonData) => {
+																			 
+						   
             await this.firebaseService.setHistory('HistoryMiniSas', {
-              user: user,
+              user: this.userService.getUser(),
               reason: reasonData.reason,
               date: new Date(),
               action: 'delete',
@@ -312,4 +343,107 @@ export class MinSasTablePage implements OnInit {
     this.router.navigate(['/login']);
   }
 
+
+  updateSelectedConsumables(event: any, consumable: any) {
+    if (event.detail.checked) {
+      this.selectedConsumables[consumable.Id] = consumable;
+    } else {
+      delete this.selectedConsumables[consumable.Id];
+    }
+  }
+  
+  updateConsumableQuantity(event: any, consumable: any) {
+    const quantity = event.detail.value;
+    this.consumableQuantities[consumable.Id] = quantity;
+  }
+  
+  updateTotal() {
+    for (const id in this.selectedConsumables) {
+      const consumable = this.selectedConsumables[id];
+      const quantity = this.consumableQuantities[id];
+      const updatedTotal = consumable.SubTotal + parseInt(quantity, 10);
+  
+      this.firebaseService.setCollectionWithId('totalMiniSAS', consumable.Id, {
+        ...consumable,
+        Total: updatedTotal
+      })
+      .catch((error) => console.error('Error updating total:', error));
+    }
+  }
+  
+  loadTotalFibers() {
+    this.firebaseService.getCollection('totalMiniSAS').subscribe((data: any[]) => {
+      this.totalFibers = data;
+    });
+  }
+
+  toggleLendFibers() {
+    this.showLendFibers = !this.showLendFibers;
+  }
+  
+  updateSelectedConsumableslend(event: any, consumable: any) {
+    if (event.detail.checked) {
+      this.selectedConsumableslend.push({
+        ...consumable,
+        quantity: 0,
+        comment: ''
+      });
+    } else {
+      this.selectedConsumableslend = this.selectedConsumableslend.filter(c => c.Id !== consumable.Id);
+    }
+    console.log(this.selectedConsumableslend); 
+  }
+
+  updateConsumableQuantitylend(event: any, consumable: any) {
+    const index = this.selectedConsumableslend.findIndex(c => c.Id === consumable.Id);
+    if (index !== -1) {
+      this.selectedConsumableslend[index].quantity = event.detail.value;
+    }
+    console.log(this.selectedConsumableslend); 
+  }
+
+  updateConsumableComment(event: any, consumable: any) {
+    const index = this.selectedConsumableslend.findIndex(c => c.Id === consumable.Id);
+    if (index !== -1) {
+      this.selectedConsumableslend[index].comment = event.detail.value;
+    }
+    console.log(this.selectedConsumableslend); 
+  }
+
+  updateLendTotal() {
+    console.log("Updating Lend Total...");
+    this.selectedConsumableslend.forEach(selected => {
+      const updatedTotal = selected.SubTotal + parseInt(selected.quantity, 10);
+      const newLendFiber = {
+        Load:selected.quantity,
+        Consumable: selected.Consumable,
+        Total: updatedTotal,
+        Comment: selected.comment,
+        Date: new Date()
+      };
+      
+      this.firebaseService.setCollectionWithId('lendMiniSAS', this.firebaseService.firestore.createId(), newLendFiber)
+        .then(() => {
+          console.log(`Updated lend fiber: ${newLendFiber.Consumable}`);
+          this.loadLendFibers();
+        })
+        .catch((error) => console.error('Error updating lend fibers:', error));
+    });
+  }
+
+  loadLendFibers() {
+    this.firebaseService.getCollection('lendMiniSAS').subscribe((data: any[]) => {
+      this.lendFibers = data.map((item) => {
+        const timestamp = item.Date.seconds * 1000 + item.Date.nanoseconds / 1000000;
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
+  
+        return {
+          ...item,
+          Date: formattedDate,
+        };
+      });
+      this.lendFibers.sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+    });
+  }
 }
