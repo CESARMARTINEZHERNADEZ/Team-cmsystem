@@ -1,3 +1,4 @@
+/* Estilo base común para todos los dispositivos */
 .centered-container {
     display: flex;
     justify-content: center;
@@ -18,16 +19,6 @@
     display: flex;
 }
 
-@media (min-width: 768px) {
-    .centered-table {
-        width: 50%;
-    }
-}
-
-.centered-table ion-col {
-    max-width: 150px;
-}
-
 .centered-title {
     text-align: center;
 }
@@ -39,4 +30,50 @@
 
 .menu-button {
     margin-right: 10px;
+}
+
+/* Ajustes para tabletas (768px a 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .centered-table {
+        width: 80%;
+    }
+
+    .button-container {
+        justify-content: center;
+    }
+}
+
+/* Ajustes para laptops y monitores de escritorio (> 1024px) */
+@media (min-width: 1024px) {
+    .centered-table {
+        width: 70%;
+    }
+
+    .button-container {
+        justify-content: flex-end;
+    }
+}
+
+/* Ajustes específicos para teléfonos (hasta 767px) */
+@media (max-width: 767px) {
+    .centered-table {
+        width: 95%;
+    }
+
+    .scan-input {
+        flex-direction: column;
+    }
+
+    .button-container {
+        justify-content: center;
+    }
+
+    .menu-button {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}
+
+.centered-table ion-col {
+    max-width: 150px;
 }

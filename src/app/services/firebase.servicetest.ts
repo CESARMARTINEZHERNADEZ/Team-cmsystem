@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
-import { finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -56,7 +55,36 @@ export class FirebaseService {
       .where('password', '==', password))
       .valueChanges();
   }
+
   setHistory(path: string, data: any) {
     return this.firestore.collection(path).add(data);
+  }
+  updateScrapFiber(id: string, data: any) {
+    return this.firestore.doc(`scrapfibers/${id}`).update(data);
+  }
+
+  deleteScrapFiber(id: string) {
+    return this.firestore.doc(`scrapfibers/${id}`).delete();
+  }
+  updateLend(id: string, data: any) {
+    return this.firestore.doc(`lendFibers/${id}`).update(data);
+  }
+
+  deleteLend(id: string) {
+    return this.firestore.doc(`lendFibers/${id}`).delete();
+  }
+
+  getCollectionData(collection: string) {
+    return this.firestore.collection(collection).valueChanges();
+  }
+  getDocument(path: string, documentId: string) {
+    return this.firestore.collection(path).doc(documentId).get();
+  }
+
+  updateConsumable(id: string, data: any) {
+    return this.firestore.doc(`life/${id}`).update(data);
+  }
+  deleteConsumable(id: string) {
+    return this.firestore.doc(`life/${id}`).delete();
   }
 }

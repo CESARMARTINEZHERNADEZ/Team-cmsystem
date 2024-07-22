@@ -10,24 +10,25 @@ import { UserService } from '../services/User.Service';
   styleUrls: ['./transceivertable.page.scss'],
 })
 export class TransceivertablePage implements OnInit {
-  public consumables: any[];
-  public selectedOption: string;
-  public selectedHistoryOption: string;
+  public consumables: any[] = [];
+  public selectedOption: string = 'option1';
+  public selectedHistoryOption: string = 'actionAsc';
   public selectedConsumables: any = {};
-  public consumableQuantities: any = {}; 
-  public totalFibers: any[] = [];
-  public showTotalFibers: boolean = false;
-  public lendFibers: any[] = [];
-  public showLendFibers: boolean = false;
-  public selectedConsumableslend: any[] = [];
+  public consumableQuantities: any = {};
+  public scrap: any[] = [];
+  public showScrap: boolean = false;
+  public selectedConsumablesScrap: any[] = [];
+  public History: any[] = [];
+  public showTable = false;
+  public showDB = false;
+  public itemsPerPage = 20;
+  public currentPage = 1;
+  public paginatedHistory: any[] = [];
+  public totalPages = 0;
+  public lend: any[] = [];
+  public showLend: boolean = false;
+  public selectedConsumablesLend: any[] = [];
 
-  History: any[] = [];
-  showTable = false;
-  showDB = false;
-  itemsPerPage = 20;
-  currentPage = 1;
-  paginatedHistory: any[] = [];
-  totalPages = 0;
 
   constructor(
     private alertController: AlertController,
@@ -57,11 +58,7 @@ export class TransceivertablePage implements OnInit {
       this.updatePagination();
       
     });
-    this.loadLendFibers();
   }
-
-
-
 
   ngOnInit() {
     const user = this.userService.getUser();
@@ -71,8 +68,7 @@ export class TransceivertablePage implements OnInit {
     else {
       this.loadConsumables();
       this.sortHistory();
-      this.loadTotalFibers();
-      this.loadLendFibers();			 
+      this.loadScrap();	
     }
   }
 
@@ -140,10 +136,16 @@ export class TransceivertablePage implements OnInit {
   toggleDB() {
     this.showDB = !this.showDB;
   }
-  
-  toggleTotalFibers() {
-    this.showTotalFibers = !this.showTotalFibers;
+
+  toggleScrap() {
+    this.showScrap = !this.showScrap;
   }
+ 
+  toggleLend() {
+    this.showLend = !this.showLend;
+  }  
+
+
 
   previousPage() {
     if (this.currentPage > 1) {
@@ -343,6 +345,7 @@ export class TransceivertablePage implements OnInit {
   }
 
 
+
   updateSelectedConsumables(event: any, consumable: any) {
     if (event.detail.checked) {
       this.selectedConsumables[consumable.Id] = consumable;
@@ -351,98 +354,385 @@ export class TransceivertablePage implements OnInit {
     }
   }
   
-  updateConsumableQuantity(event: any, consumable: any) {
-    const quantity = event.detail.value;
-    this.consumableQuantities[consumable.Id] = quantity;
-  }
-  
-  updateTotal() {
-    for (const id in this.selectedConsumables) {
-      const consumable = this.selectedConsumables[id];
-      const quantity = this.consumableQuantities[id];
-      const updatedTotal = consumable.SubTotal + parseInt(quantity, 10);
-  
-      this.firebaseService.setCollectionWithId('totalTransceiver', consumable.Id, {
-        ...consumable,
-        Total: updatedTotal
-      })
-      .catch((error) => console.error('Error updating total:', error));
-    }
-  }
-  
-  loadTotalFibers() {
-    this.firebaseService.getCollection('totalTransceiver').subscribe((data: any[]) => {
-      this.totalFibers = data;
-    });
-  }
-
-  toggleLendFibers() {
-    this.showLendFibers = !this.showLendFibers;
-  }
-  
-  updateSelectedConsumableslend(event: any, consumable: any) {
+  updateSelectedConsumablesLend(event: any, consumable: any) {
     if (event.detail.checked) {
-      this.selectedConsumableslend.push({
+      this.selectedConsumablesLend.push({
         ...consumable,
         quantity: 0,
-        comment: ''
+        reason: ''
       });
     } else {
-      this.selectedConsumableslend = this.selectedConsumableslend.filter(c => c.Id !== consumable.Id);
+      this.selectedConsumablesLend = this.selectedConsumablesLend.filter(c => c.Id !== consumable.Id);
     }
-    console.log(this.selectedConsumableslend); 
+    console.log(this.selectedConsumablesLend); 
   }
-
-  updateConsumableQuantitylend(event: any, consumable: any) {
-    const index = this.selectedConsumableslend.findIndex(c => c.Id === consumable.Id);
+  
+  updateConsumableQuantityLend(event: any, consumable: any) {
+    const index = this.selectedConsumablesLend.findIndex(c => c.Id === consumable.Id);
     if (index !== -1) {
-      this.selectedConsumableslend[index].quantity = event.detail.value;
+      this.selectedConsumablesLend[index].quantity = event.detail.value;
     }
-    console.log(this.selectedConsumableslend); 
+    console.log(this.selectedConsumablesLend); 
   }
-
-  updateConsumableComment(event: any, consumable: any) {
-    const index = this.selectedConsumableslend.findIndex(c => c.Id === consumable.Id);
+  
+  updateConsumableReasonLend(event: any, consumable: any) {
+    const index = this.selectedConsumablesLend.findIndex(c => c.Id === consumable.Id);
     if (index !== -1) {
-      this.selectedConsumableslend[index].comment = event.detail.value;
+      this.selectedConsumablesLend[index].reason = event.detail.value;
     }
-    console.log(this.selectedConsumableslend); 
+    console.log(this.selectedConsumablesLend); 
   }
-
+  
   updateLendTotal() {
     console.log("Updating Lend Total...");
-    this.selectedConsumableslend.forEach(selected => {
-      const updatedTotal = selected.SubTotal + parseInt(selected.quantity, 10);
-      const newLendFiber = {
-        Load:selected.quantity,
-        Consumable: selected.Consumable,
-        Total: updatedTotal,
-        Comment: selected.comment,
-        Date: new Date()
-      };
-      
-      this.firebaseService.setCollectionWithId('lendTransceiver', this.firebaseService.firestore.createId(), newLendFiber)
-        .then(() => {
-          console.log(`Updated lend Transceiver: ${newLendFiber.Consumable}`);
-          this.loadLendFibers();
-        })
-        .catch((error) => console.error('Error updating lend Transceiver:', error));
+    this.selectedConsumablesLend.forEach(selected => {
+        const lendId = this.firebaseService.firestore.createId(); 
+        const newLend = {
+            Id: lendId, 
+            Lend: selected.quantity,
+            Consumable: selected.Consumable,
+            Reason: selected.reason,
+            Date: new Date()
+        };
+  
+        this.firebaseService.setCollectionWithId('lendTransceiver', lendId, newLend)
+            .then(() => {
+                console.log(`Updated lend: ${newLend.Consumable}`);
+                this.loadLend();
+  
+                // Registrar en History
+                this.firebaseService.setHistory('HistoryTransceiver', {
+                    user: this.userService.getUser(),
+                    reason: selected.reason,
+                    date: new Date(),
+                    action: 'lend',
+                    consumable: newLend
+                });
+            })
+            .catch((error) => console.error('Error updating:', error));
     });
   }
-
-  loadLendFibers() {
-    this.firebaseService.getCollection('lendTransceiver').subscribe((data: any[]) => {
-      this.lendFibers = data.map((item) => {
-        const timestamp = item.Date.seconds * 1000 + item.Date.nanoseconds / 1000000;
-        const date = new Date(timestamp);
-        const formattedDate = date.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
   
+  loadLend() {
+    this.firebaseService.getCollection('lendTransceiver').subscribe((data: any[]) => {
+      this.lend = data.map((item) => {
+        let formattedDate = item.Date;
+        if (item.Date && item.Date.seconds) {
+          const timestamp = item.Date.seconds * 1000 + item.Date.nanoseconds / 1000000;
+          const date = new Date(timestamp);
+          formattedDate = date.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
+        }
+        
         return {
           ...item,
           Date: formattedDate,
         };
       });
-      this.lendFibers.sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+      this.lend.sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
     });
   }
+  
+  async updateLend(lend: any) {
+    const user = this.userService.getUser();
+    const reasonAlert = await this.alertController.create({
+      header: 'UPDATE LEND',
+      message: 'Please provide a reason for the update:',
+      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+      buttons: [
+        { text: 'CANCEL', role: 'cancel' },
+        {
+          text: 'NEXT',
+          handler: async (reasonData) => {
+            const updateAlert = await this.alertController.create({
+              header: 'UPDATE LEND',
+              message: 'New details of the lend',
+              inputs: [
+                { name: 'quantity', type: 'number', placeholder: 'Quantity', value: lend.Lend.toString() },
+                { name: 'reason', type: 'text', placeholder: 'Reason', value: lend.Reason },
+              ],
+              buttons: [
+                { text: 'CANCEL', role: 'cancel' },
+                {
+                  text: 'SAVE',
+                  handler: (data) => {
+                    const updatedLend = {
+                      ...lend,
+                      Lend: +data.quantity,
+                      Reason: data.reason,
+                      Date: new Date()
+                    };
+  
+                    this.firebaseService.setHistory('HistoryTransceiver', {
+                      user: this.userService.getUser(),
+                      reason: reasonData.reason,
+                      date: new Date(),
+                      action: 'update lend',
+                      lend: updatedLend,
+                      consumable: lend
+                    });
+  
+                    this.firebaseService.update(`lendTransceiver/${lend.Id}`, updatedLend)
+                      .then(() => this.loadLend())
+                      .catch((error) => console.error('Error updating lend:', error));
+                  }
+                }
+              ]
+            });
+  
+            await updateAlert.present();
+          }
+        }
+      ]
+    });
+  
+    await reasonAlert.present();
+  }
+  
+  async deleteLend(lend: any) {
+    const user = this.userService.getUser();
+    const reasonAlert = await this.alertController.create({
+        header: 'DELETE LEND',
+        message: `Please provide a reason for deleting ${lend.Consumable}:`,
+        inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+        buttons: [
+            { text: 'CANCEL', role: 'cancel' },
+            {
+                text: 'NEXT',
+                handler: async (reasonData) => {
+                    await this.firebaseService.setHistory('HistoryTransceiver', {
+                        user: this.userService.getUser(),
+                        reason: reasonData.reason,
+                        date: new Date(),
+                        action: 'delete lend',
+                        consumable: lend
+                    });
+  
+                    const deleteAlert = await this.alertController.create({
+                        header: 'DELETE LEND',
+                        message: `Are you sure you want to delete ${lend.Consumable}?`,
+                        buttons: [
+                            { text: 'CANCEL', role: 'cancel' },
+                            {
+                                text: 'DELETE',
+                                handler: () => {
+                                    this.firebaseService.deleteDocument('lendTransceiver', lend.Id)
+                                        .then(() => {
+                                            this.loadLend();
+  
+                                            // Registrar en HistoryC1
+                                            this.firebaseService.setHistory('HistoryTransceiver', {
+                                                user: this.userService.getUser(),
+                                                reason: reasonData.reason,
+                                                date: new Date(),
+                                                action: 'delete lend',
+                                                consumable: lend
+                                            });
+                                        })
+                                        .catch((error) => console.error('Error deleting lend:', error));
+                                }
+                            }
+                        ]
+                    });
+  
+                    await deleteAlert.present();
+                }
+            }
+        ]
+    });
+  
+    await reasonAlert.present();
+  }
+
+
+  updateSelectedConsumablesScrap(event: any, consumable: any) {
+    if (event.detail.checked) {
+      this.selectedConsumablesScrap.push({
+        ...consumable,
+        quantity: 0,
+        reason: ''
+      });
+    } else {
+      this.selectedConsumablesScrap = this.selectedConsumablesScrap.filter(c => c.Id !== consumable.Id);
+    }
+    console.log(this.selectedConsumablesScrap); 
+  }
+  
+  updateConsumableQuantityScrap(event: any, consumable: any) {
+    const index = this.selectedConsumablesScrap.findIndex(c => c.Id === consumable.Id);
+    if (index !== -1) {
+      this.selectedConsumablesScrap[index].quantity = event.detail.value;
+    }
+    console.log(this.selectedConsumablesScrap); 
+  }
+  
+  updateConsumableReason(event: any, consumable: any) {
+    const index = this.selectedConsumablesScrap.findIndex(c => c.Id === consumable.Id);
+    if (index !== -1) {
+      this.selectedConsumablesScrap[index].reason = event.detail.value;
+    }
+    console.log(this.selectedConsumablesScrap); 
+  }
+  
+  updateScrapTotal() {
+    console.log("Updating Scrap Total...");
+    this.selectedConsumablesScrap.forEach(selected => {
+        const scrapId = this.firebaseService.firestore.createId(); 
+        const newScrap = {
+            Id: scrapId,
+            Scrap: selected.quantity,
+            Consumable: selected.Consumable,
+            Reason: selected.reason,
+            Date: new Date()
+        };
+
+        this.firebaseService.setCollectionWithId('scrapTransceiver', scrapId, newScrap) 
+            .then(() => {
+                console.log(`Updated scrap: ${newScrap.Consumable}`);
+                this.loadScrap();
+
+                
+                this.firebaseService.setHistory('HistoryTransceiver', {
+                    user: this.userService.getUser(),
+                    reason: selected.reason,
+                    date: new Date(),
+                    action: 'scrap',
+                    consumable: newScrap
+                });
+            })
+            .catch((error) => console.error('Error updating:', error));
+    });
 }
+async updateScrap(scrap: any) {
+  const user = this.userService.getUser();
+  const reasonAlert = await this.alertController.create({
+    header: 'UPDATE SCRAP',
+    message: 'Please provide a reason for the update:',
+    inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+    buttons: [
+      { text: 'CANCEL', role: 'cancel' },
+      {
+        text: 'NEXT',
+        handler: async (reasonData) => {
+          const updateAlert = await this.alertController.create({
+            header: 'UPDATE SCRAP',
+            message: 'New details of the scrap',
+            inputs: [
+              { name: 'quantity', type: 'number', placeholder: 'Quantity', value: scrap.Scrap.toString() },
+              { name: 'reason', type: 'text', placeholder: 'Reason', value: scrap.Reason },
+            ],
+            buttons: [
+              { text: 'CANCEL', role: 'cancel' },
+              {
+                text: 'SAVE',
+                handler: (data) => {
+                  const updatedScrap = {
+                    ...scrap,
+                    Scrap: +data.quantity,
+                    Reason: data.reason,
+                    Date: new Date()
+                  };
+
+                  this.firebaseService.setHistory('HistoryTransceiver', {
+                    user: this.userService.getUser(),
+                    reason: reasonData.reason,
+                    date: new Date(),
+                    action: 'update scrap',
+                    scrap: updatedScrap,
+                    consumable: scrap
+                  });
+
+                  this.firebaseService.update(`scrapTransceiver/${scrap.Id}`, updatedScrap)
+                    .then(() => this.loadScrap())
+                    .catch((error) => console.error('Error updating scrap:', error));
+                }
+              }
+            ]
+          });
+
+          await updateAlert.present();
+        }
+      }
+    ]
+  });
+
+  await reasonAlert.present();
+}
+
+  loadScrap() {
+    this.firebaseService.getCollection('scrapTransceiver').subscribe((data: any[]) => {
+      this.scrap = data.map((item) => {
+        let formattedDate = item.Date;
+        if (item.Date && item.Date.seconds) {
+          const timestamp = item.Date.seconds * 1000 + item.Date.nanoseconds / 1000000;
+          const date = new Date(timestamp);
+          formattedDate = date.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
+        }
+        
+        return {
+          ...item,
+          Date: formattedDate,
+        };
+      });
+      this.scrap.sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+    });
+  }
+  
+  
+  async deleteScrap(scrap: any) {
+    const user = this.userService.getUser();
+    const reasonAlert = await this.alertController.create({
+        header: 'DELETE SCRAP',
+        message: `Please provide a reason for deleting ${scrap.Consumable}:`,
+        inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+        buttons: [
+            { text: 'CANCEL', role: 'cancel' },
+            {
+                text: 'NEXT',
+                handler: async (reasonData) => {
+                    await this.firebaseService.setHistory('HistoryTransceiver', {
+                        user: this.userService.getUser(),
+                        reason: reasonData.reason,
+                        date: new Date(),
+                        action: 'delete scrap',
+                        consumable: scrap
+                    });
+  
+                    const deleteAlert = await this.alertController.create({
+                        header: 'DELETE SCRAP',
+                        message: `Are you sure you want to delete ${scrap.Consumable}?`,
+                        buttons: [
+                            { text: 'CANCEL', role: 'cancel' },
+                            {
+                                text: 'DELETE',
+                                handler: () => {
+                                    this.firebaseService.deleteDocument('scrapTransceiver', scrap.Id)
+                                        .then(() => {
+                                            this.loadScrap();
+  
+                                            // Registrar en History
+                                            this.firebaseService.setHistory('HistoryTransceiver', {
+                                                user: this.userService.getUser(),
+                                                reason: reasonData.reason,
+                                                date: new Date(),
+                                                action: 'delete scrap',
+                                                consumable: scrap
+                                            });
+                                        })
+                                        .catch((error) => console.error('Error deleting scrap:', error));
+                                }
+                            }
+                        ]
+                    });
+  
+                    await deleteAlert.present();
+                }
+            }
+        ]
+    });
+  
+    await reasonAlert.present();
+  }
+  
+
+}
+

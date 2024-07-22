@@ -1,0 +1,70 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  
+<div>
+ 
+    <div class="butt">
+      <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
+      <ion-button (click)="addLifeConsumable()" color="danger">Add</ion-button>
+    </div>
+    <ion-item >
+      <ion-label>Select an option</ion-label>
+      <ion-select (ionChange)="sortLifeConsumables($event)">
+        <ion-select-option value="consumable-asc">Consumable Ascending</ion-select-option>
+        <ion-select-option value="consumable-desc">Consumable Descending</ion-select-option>
+        <ion-select-option value="initialDate-asc">Initial Date Ascending</ion-select-option>
+        <ion-select-option value="initialDate-desc">Initial Date Descending</ion-select-option>
+        <ion-select-option value="progress-green">Progress (Green)</ion-select-option>
+        <ion-select-option value="progress-yellow">Progress (Yellow)</ion-select-option>
+        <ion-select-option value="progress-red">Progress (Red)</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </div>
+
+  <ion-grid >
+    <ion-row class="header-row">
+      <ion-col>Consumable</ion-col>
+      <ion-col>Description</ion-col>
+      <ion-col>Total</ion-col>
+      <ion-col>Initial Date</ion-col>
+      <ion-col>Final Date</ion-col>
+      <ion-col>Progress</ion-col>
+      <ion-col>Actions</ion-col>
+    </ion-row>
+    <ion-row *ngFor="let item of paginatedLifeConsumables" class="data-row">
+      <ion-col>{{ item.Consumable }}</ion-col>
+      <ion-col>{{ item.Description }}</ion-col>
+      <ion-col>{{ item.Total }}</ion-col>
+      <ion-col>{{ item.initialDate | date: 'shortDate' }}</ion-col>
+      <ion-col>{{ item.finalDate | date: 'shortDate' }}</ion-col>
+      <ion-col>
+        <div class="progress-bar-container">
+          <div class="progress-bar" [style.width.%]="item.progress" [style.background]="getProgressBarColor(item.progress)">
+            {{ item.progress | number: '1.0-0' }}%
+          </div>
+        </div>
+      </ion-col>
+      <ion-col>
+
+        <ion-icon name="create-outline" class="iconup" (click)="updateLifeConsumable(item)"></ion-icon>
+        <ion-icon name="trash-outline" class="icondel" (click)="deleteLifeConsumable(item)"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div class="pagination-buttons">
+    <ion-button (click)="previousPage()" [disabled]="currentPage === 1">Previous</ion-button>
+    <ion-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</ion-button>
+  </div>
+</ion-content>

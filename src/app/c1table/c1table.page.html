@@ -11,7 +11,6 @@
 
 <ion-content [fullscreen]="true">
   <div class="select">
- 
     <ion-select placeholder="Select the order of the table" [(ngModel)]="selectedOption" (ionChange)="onOptionChange($event)">
       <ion-select-option value="option1">A-Z Consumable Name</ion-select-option>
       <ion-select-option value="option2">Z-A Consumable Name</ion-select-option>
@@ -21,8 +20,9 @@
 
     <div class="butt">
       <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
+      <ion-button class="buttcounter" routerLink="/life">Life</ion-button>
       <ion-button class="buttcounter" routerLink="/c1counter">Counter</ion-button>
-      <ion-button (click)="addConsumable()">Add</ion-button>
+      <ion-button (click)="addConsumable()" color="danger">Add</ion-button>
     </div>
   </div>
 
@@ -34,13 +34,11 @@
       <th>Minimum Level</th>
       <th>Maximum Level</th>
       <th>Total</th>
-    
       <th></th>
     </tr>
     <tr *ngFor="let consumable of consumables" [ngClass]="{
       'blue-row': consumable.SubTotal >= consumable.MaximumLevel, 
       'red-row': consumable.SubTotal <= consumable.MinimumLevel
-      
     }">
       <td>{{ consumable.Consumable }}</td>
       <td>{{ consumable.Description }}</td>
@@ -48,7 +46,6 @@
       <td>{{ consumable.MinimumLevel }}</td>
       <td>{{ consumable.MaximumLevel }}</td>
       <td>{{ consumable.SubTotal }}</td>
-     
       <td>
         <ion-icon name="create-outline" class="iconup" (click)="updateConsumable(consumable)"></ion-icon>
         <ion-icon name="trash-outline" class="icondel" (click)="deleteConsumable(consumable)"></ion-icon>
@@ -56,80 +53,74 @@
     </tr>
   </table>
 
-
   <div class="color-legend" style="text-align: center;">
-    <div><span class="color-box blue"></span> Blue: Consumable exceeds maximum level</div>
-    <div><span class="color-box red"></span> Red: Consumable is less than or equal to minimum level</div>
+    <div><span class="color-box blue"></span> Blue: Consumable exceeds or equals the maximum level</div>
+    <div><span class="color-box red"></span> Red: the consumable is less than or equal to the minimum level</div>
   </div>
 
-  <ion-button expand="full" (click)="toggleTotalFibers()" >check totals</ion-button>
-  <h2 *ngIf="showTotalFibers">Number of units running / consumables using</h2>
-  <ion-list *ngIf="showTotalFibers">
+  <!-- Sección de LEND Consumables -->
+  <ion-button expand="full" (click)="toggleLend()">Lend Consumable</ion-button>
+  <ion-list *ngIf="showLend">
     <ion-item *ngFor="let consumable of consumables">
       <ion-label>
         <h2>{{ consumable.Consumable }}</h2>
         <p>Total: {{ consumable.SubTotal }}</p>
       </ion-label>
-      <ion-checkbox slot="start" (ionChange)="updateSelectedConsumables($event, consumable)"></ion-checkbox>
-      <ion-input slot="end" type="number" (ionChange)="updateConsumableQuantity($event, consumable)" placeholder="Quantity"></ion-input>
+      <ion-checkbox slot="start" (ionChange)="updateSelectedConsumablesLend($event, consumable)"></ion-checkbox>
+      <ion-input slot="end" type="number" (ionChange)="updateConsumableQuantityLend($event, consumable)" placeholder="Quantity"></ion-input>
+      <ion-input slot="end" type="text" (ionChange)="updateConsumableReasonLend($event, consumable)" placeholder="Reason"></ion-input>
     </ion-item>
   </ion-list>
-
-  <ion-button expand="full" (click)="updateTotal()" *ngIf="showTotalFibers" color="danger">Update Total</ion-button>
-
-  
-  <ion-list *ngIf="showTotalFibers">
-    <ion-item *ngFor="let fiber of totalFibers">
+  <ion-button expand="full" (click)="updateLendTotal()" color="danger" *ngIf="showLend">Update Lend Total</ion-button>
+  <ion-list *ngIf="showLend">
+    <ion-item *ngFor="let lend of lend">
       <ion-label>
-        <h2>{{ fiber.Consumable }}</h2>
-        <p>Total: {{ fiber.Total }}</p>
+        <h2>{{ lend.Consumable }}</h2>
+        <p>Lend: {{ lend.Lend }}</p>
+        <p>Reason: {{ lend.Reason }}</p>
+        <p>Date: {{ lend.Date }}</p>
       </ion-label>
+      <ion-button (click)="updateLend(lend)" color="primary">Update</ion-button>
+      <ion-button (click)="deleteLend(lend)" color="danger">Delete</ion-button>
     </ion-item>
   </ion-list>
 
-
-  <ion-button expand="full" (click)="toggleLendFibers()">Lend Consumable</ion-button>
-
-  <ion-list *ngIf="showLendFibers">
+  <!-- Sección de Scrap Consumables -->
+  <ion-button expand="full" (click)="toggleScrap()">Scrap Consumable</ion-button>
+  <ion-list *ngIf="showScrap">
     <ion-item *ngFor="let consumable of consumables">
       <ion-label>
         <h2>{{ consumable.Consumable }}</h2>
         <p>Total: {{ consumable.SubTotal }}</p>
       </ion-label>
-      <ion-checkbox slot="start" (ionChange)="updateSelectedConsumableslend($event, consumable)"></ion-checkbox>
-      <ion-input slot="end" type="number" (ionChange)="updateConsumableQuantitylend($event, consumable)" placeholder="Quantity"></ion-input>
-      <ion-input slot="end" type="text" (ionChange)="updateConsumableComment($event, consumable)" placeholder="Comment"></ion-input>
+      <ion-checkbox slot="start" (ionChange)="updateSelectedConsumablesScrap($event, consumable)"></ion-checkbox>
+      <ion-input slot="end" type="number" (ionChange)="updateConsumableQuantityScrap($event, consumable)" placeholder="Quantity"></ion-input>
+      <ion-input slot="end" type="text" (ionChange)="updateConsumableReason($event, consumable)" placeholder="Reason"></ion-input>
     </ion-item>
   </ion-list>
-  
-  <ion-button expand="full" (click)="updateLendTotal()" color="danger" *ngIf="showLendFibers">Update Lend Total</ion-button>
-
-  <ion-list *ngIf="showLendFibers">
-    <ion-item *ngFor="let fiber of lendFibers">
+  <ion-button expand="full" (click)="updateScrapTotal()" color="danger" *ngIf="showScrap">Update Scrap Total</ion-button>
+  <ion-list *ngIf="showScrap">
+    <ion-item *ngFor="let scrap of scrap">
       <ion-label>
-        <h2>{{ fiber.Consumable }}</h2>
-        <p>Load: {{ fiber.Load }}</p>
-        <p>Total: {{ fiber.Total }}</p>
-        <p>Comment: {{ fiber.Comment }}</p>
-        <p>Date: {{ fiber.Date}}</p>
+        <h2>{{ scrap.Consumable }}</h2>
+        <p>Scrap: {{ scrap.Scrap }}</p>
+        <p>Reason: {{ scrap.Reason }}</p>
+        <p>Date: {{ scrap.Date }}</p>
       </ion-label>
+      <ion-button (click)="updateScrap(scrap)" color="primary">Update</ion-button>
+      <ion-button (click)="deleteScrap(scrap)" color="danger">Delete</ion-button>
     </ion-item>
   </ion-list>
 
-
-
-
-
+  <!-- Historial -->
   <ion-button (click)="toggleTable()" expand="full">History</ion-button>
-
   <ion-select placeholder="Select the order of the history" [(ngModel)]="selectedHistoryOption" (ionChange)="onHistoryOptionChange($event)" *ngIf="showTable">
     <ion-select-option value="nameAsc">A-Z Consumable Name</ion-select-option>
     <ion-select-option value="nameDesc">Z-A Consumable Name</ion-select-option>
     <ion-select-option value="actionAsc">Action</ion-select-option>
     <ion-select-option value="userAsc">User</ion-select-option>
   </ion-select>
-
-  <table *ngIf="showTable" >
+  <table *ngIf="showTable">
     <tr>
       <th>Consumable</th>
       <th>Date</th>
@@ -137,7 +128,7 @@
       <th>Reason</th>
       <th>User</th>
     </tr>
-    <tr *ngFor="let historyItem of paginatedHistory" >
+    <tr *ngFor="let historyItem of paginatedHistory">
       <td>{{ historyItem.consumable.Consumable }}</td>
       <td>{{ historyItem.date }}</td>
       <td>{{ historyItem.action }}</td>
@@ -145,10 +136,8 @@
       <td>{{ historyItem.user.clockNumber }} - {{ historyItem.user.fullName }}</td>
     </tr>
   </table>
-
   <div class="button-container" *ngIf="showTable">
     <ion-button (click)="previousPage()" [disabled]="currentPage === 1">Previous</ion-button>
     <ion-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</ion-button>
   </div>
-
 </ion-content>

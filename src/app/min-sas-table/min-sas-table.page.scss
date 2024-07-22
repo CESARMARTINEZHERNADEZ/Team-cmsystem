@@ -1,3 +1,4 @@
+/* Estilo base común para todos los dispositivos */
 .responsive-container {
     display: flex;
     justify-content: space-between;
@@ -7,17 +8,6 @@
 .responsive-container ion-label,
 .responsive-container ion-input {
     margin-right: 20px;
-}
-
-@media (max-width: 500px) {
-    .responsive-container {
-        flex-direction: column;
-    }
-    .responsive-container ion-label,
-    .responsive-container ion-input {
-        margin-right: 0;
-        margin-bottom: 20px;
-    }
 }
 
 .centered-title {
@@ -34,24 +24,27 @@ td, th {
     word-wrap: break-word;
     text-align: center;
 }
-.iconup{
+
+.iconup {
     font-size: 24px; 
     color: blue;
 }
 
-.icondel{
+.icondel {
     font-size: 24px; 
     color: rgb(133, 0, 0);
 }
-.butt{
+
+.butt {
     display: flex; 
     justify-content: flex-end;
 }
 
-.buttcounter{
+.buttcounter {
     margin-right: 10px;
 }
-.select{
+
+.select {
     display: flex; 
     justify-content: space-between; 
     align-items: center;
@@ -65,10 +58,11 @@ td, th {
     background-color: red;
     color: white;
 }
+
 .yellow-row {
     background-color: yellow;
-   
 }
+
 .color-box {
     display: inline-block;
     width: 15px;
@@ -84,7 +78,96 @@ td, th {
     background-color: red;
     color: white;
 }
+
 .yellow {
-    background-color:yellow;
-   
+    background-color: yellow;
+}
+
+/* Ajustes para teléfonos (hasta 767px) */
+@media (max-width: 767px) {
+    .responsive-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .responsive-container ion-label,
+    .responsive-container ion-input {
+        margin-right: 0;
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    
+    .butt {
+        justify-content: center;
+    }
+    
+    .buttcounter {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    
+    .select {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    table {
+        table-layout: auto;
+    }
+}
+
+/* Ajustes para tabletas (768px a 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .responsive-container {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .responsive-container ion-label,
+    .responsive-container ion-input {
+        margin-right: 15px;
+        width: auto;
+    }
+    
+    .butt {
+        justify-content: flex-end;
+    }
+    
+    .select {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    table {
+        table-layout: fixed;
+    }
+}
+
+/* Ajustes para laptops y monitores de escritorio (> 1024px) */
+@media (min-width: 1024px) {
+    .responsive-container {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    .responsive-container ion-label,
+    .responsive-container ion-input {
+        margin-right: 20px;
+        width: auto;
+    }
+    
+    .butt {
+        justify-content: flex-end;
+    }
+    
+    .select {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    table {
+        table-layout: fixed;
+    }
 }
