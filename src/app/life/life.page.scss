@@ -1,0 +1,44 @@
+.header-row {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  .data-row {
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .progress-bar-container {
+    width: 100%;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .progress-bar {
+    height: 20px;
+    text-align: center;
+    line-height: 20px;
+    color: #b0b0b0;
+    border-radius: 5px;
+  }
+  
+  .pagination-buttons {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .butt {
+    display: flex; 
+    justify-content: flex-end;
+}
+.iconup {
+  font-size: 24px; 
+  color: blue;
+}
+
+.icondel {
+  font-size: 24px; 
+  color: rgb(133, 0, 0);
+}
+  

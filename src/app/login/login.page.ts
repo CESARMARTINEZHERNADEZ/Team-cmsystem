@@ -39,6 +39,9 @@ export class LoginPage implements OnInit {
       }
     });
   }
+
+
+
   
   clearLoginForm() {
     this.clockNumber = '';

@@ -39,20 +39,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let consumable of filteredConsumables">
+        <tr *ngFor="let consumable of filteredConsumables; let i = index">
           <td>{{ consumable.Consumable }}</td>
           <td>{{ consumable.SubTotal }}</td>
           <td>
             <ion-button (click)="increment(consumable)">Increase</ion-button>
           </td>
           <td>
-            <ion-input type="text" placeholder="Scan" (keyup.enter)="handleScanInput(consumable, 'increase', $event)"></ion-input>
+            <ion-input #scanInput type="text" placeholder="Scan" (keyup.enter)="handleScanInput(consumable, 'increase', $event, i)"></ion-input>
           </td>
           <td>
             <ion-button (click)="decrement(consumable)">Decrease</ion-button>
           </td>
           <td>
-            <ion-input type="text" placeholder="Scan" (keyup.enter)="handleScanInput(consumable, 'decrease', $event)"></ion-input>
+            <ion-input #scanInput type="text" placeholder="Scan" (keyup.enter)="handleScanInput(consumable, 'decrease', $event, i)"></ion-input>
           </td>
         </tr>
       </tbody>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.servicetest';
 import { UserService } from '../services/User.Service';
@@ -14,7 +14,7 @@ export class MinSasCounterPage implements OnInit {
   public filteredConsumables: any[] = [];
   public partNumber: string = '';
   private alertShown: { [id: string]: boolean } = {};
-  
+  @ViewChildren('scanInput') scanInputs!: QueryList<ElementRef>;
   constructor(
     public alertController: AlertController,
     private firebaseService: FirebaseService,
@@ -46,6 +46,12 @@ export class MinSasCounterPage implements OnInit {
 
     let alertLevel = '';
 
+    const range = maxLevel - minLevel;
+    const high20 = maxLevel - range * 0.20;
+    const high40 = maxLevel - range * 0.40;
+    const high60 = maxLevel - range * 0.60;
+    const high80 = maxLevel - range * 0.80;
+
     if (action === 'decrease') {
       if (SubTotal === 0) {
         alertLevel = 'zero';
@@ -55,18 +61,15 @@ export class MinSasCounterPage implements OnInit {
         alertLevel = 'low_50%';
       } else if (SubTotal <= minLevel) {
         alertLevel = 'low';
-      } else if (SubTotal <= minLevel * 1.20) {
-        alertLevel = 'high_20%';
-      }else if (SubTotal <= minLevel * 2.40) {
-        alertLevel = 'high_40%';
-      }else if (SubTotal <= minLevel * 3.60) {
-        alertLevel = 'high_60%';
-      } else if (SubTotal <= minLevel * 4.80) {
+      } else if (SubTotal <= high80) {
         alertLevel = 'high_80%';
+      } else if (SubTotal <= high60) {
+        alertLevel = 'high_60%';
+      } else if (SubTotal <= high40) {
+        alertLevel = 'high_40%';
+      } else if (SubTotal <= high20) {
+        alertLevel = 'high_20%';
       }
-
-
-
     } else if (action === 'increase') {
       if (SubTotal >= maxLevel) {
         alertLevel = 'high';
@@ -99,16 +102,16 @@ export class MinSasCounterPage implements OnInit {
         message = `The consumable "${consumable.Consumable}" is at 50% of the minimum level. Please consider ordering more.`;
         break;
       case 'high_20%':
-        message = `The consumable "${consumable.Consumable}" is 20% away from reaching the minimum level. Please check stock.`;
+        message = `The consumable "${consumable.Consumable}" is 20% away from the minimum level. Please check stock.`;
         break;
       case 'high_40%':
-        message = `The consumable "${consumable.Consumable}" is 40% away from reaching the minimum level. Please check stock.`;
+        message = `The consumable "${consumable.Consumable}" is 40% away from the minimum level. Please check stock.`;
         break;
       case 'high_60%':
-        message = `The consumable "${consumable.Consumable}" is 60% away from reaching the minimum level. Please check stock.`;
+        message = `The consumable "${consumable.Consumable}" is 60% away from the minimum level. Please check stock.`;
         break;
       case 'high_80%':
-        message = `The consumable "${consumable.Consumable}" is 80% away from reaching the minimum level. Please check stock.`;
+        message = `The consumable "${consumable.Consumable}" is 80% away from the minimum level. Please check stock.`;
         break;
       case 'high_75%':
         message = `The consumable "${consumable.Consumable}" is at 75% of the maximum level. Please monitor stock.`;
@@ -217,8 +220,8 @@ export class MinSasCounterPage implements OnInit {
     }
   }
 
-  handleScanInput(consumable: any, action: string, event: any) {
-    const scannedPartNumber = event.target.value;
+handleScanInput(consumable: any, action: string, event: any, index: number) {
+  const scannedPartNumber = event.target.value;
     if (scannedPartNumber && scannedPartNumber === consumable.PartNumber) {
       if (action === 'increase') {
         this.increment(consumable);
@@ -226,6 +229,7 @@ export class MinSasCounterPage implements OnInit {
         this.decrement(consumable);
       }
       event.target.value = '';
+      setTimeout(() => this.scanInputs.toArray()[index].nativeElement.focus(), 0); // Refocus the input field
     }
   }
 

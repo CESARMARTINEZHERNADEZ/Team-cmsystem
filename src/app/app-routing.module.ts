@@ -28,9 +28,7 @@ const routes: Routes = [
   {
     path: 'signin',
     loadChildren: () => import('./signin/signin.module').then( m => m.SigninPageModule)
-  },
-  
-
+  }, 
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
@@ -59,6 +57,11 @@ const routes: Routes = [
     path: 'transceivertable',
     loadChildren: () => import('./transceivertable/transceivertable.module').then( m => m.TransceivertablePageModule)
   },
+  {
+    path: 'life',
+    loadChildren: () => import('./life/life.module').then( m => m.LifePageModule)
+  },
+
  
   
 

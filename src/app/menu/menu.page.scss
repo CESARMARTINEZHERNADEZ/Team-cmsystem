@@ -1,16 +1,33 @@
-
 .centered-title {
-    text-align: center;
-  }
-  .centered-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-  }
+  text-align: center;
+}
+
+.centered-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.big-button {
+  width: 100%;
+  height: 100px;
+}
+
+
+.centered-red-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.red-button {
+  --background: red;
+}
+
+.blue-button {
+  --background: rgb(0, 255, 247);
+  color: rgb(0, 0, 0);
   
-  .big-button {
-    width: 90%;
-    height: 100px;
-  }
-  
+}
+//navy
