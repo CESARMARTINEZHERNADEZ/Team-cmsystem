@@ -3,7 +3,7 @@
     <ion-title>Spare Control CMSystem</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="logout()">
-        <ion-icon name="log-out-outline"></ion-icon>
+        Log out
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -20,18 +20,20 @@
     <ion-grid>
       <ion-row>
         <ion-col size="6">
-          <ion-button [ngClass]="buttonStyles['c1counter']" class="big-button" expand="full" routerLink="/c1counter">200G/100G Fibers</ion-button>
+          <ion-button [ngClass]="buttonStyles['c1counter']" class="big-button" expand="full" routerLink="/c1counter">Cage A</ion-button>
+          <ion-list>
+            <ion-item *ngFor="let consumable of consumablesByCollection['c1counter']">
+              {{ consumable }}
+            </ion-item>
+          </ion-list>
         </ion-col>
         <ion-col size="6">
-          <ion-button [ngClass]="buttonStyles['min-sas-counter']" class="big-button" expand="full" routerLink="/min-sas-counter">MiniSAS</ion-button>
-        </ion-col>
-      </ion-row>
-      <ion-row>
-        <ion-col size="6">
-          <ion-button [ngClass]="buttonStyles['cat6counter']" class="big-button" expand="full" routerLink="/cat6counter">Cat6 Network Cable</ion-button>
-        </ion-col>
-        <ion-col size="6">
-          <ion-button [ngClass]="buttonStyles['transceivercounter']" class="big-button" expand="full" routerLink="/transceivercounter">Transceiver 1G:40G</ion-button>
+          <ion-button [ngClass]="buttonStyles['c2counter']" class="big-button" expand="full" routerLink="/c2counter">Cage B</ion-button>
+          <ion-list>
+            <ion-item *ngFor="let consumable of consumablesByCollection['c2counter']">
+              {{ consumable }}
+            </ion-item>
+          </ion-list>
         </ion-col>
       </ion-row>
       <ion-row>

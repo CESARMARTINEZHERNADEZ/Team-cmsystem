@@ -11,9 +11,8 @@ import { Router } from '@angular/router';
 })
 export class HomePage implements OnInit, AfterViewInit {
   consumablesData: any[] = [];
-  transceiverData: any[] = [];
-  miniSASData: any[] = [];
-  cat6Data: any[] = [];
+  C2consumablesData: any[] = [];
+
 
   constructor(
     private firebaseService: FirebaseService,
@@ -24,13 +23,12 @@ export class HomePage implements OnInit, AfterViewInit {
   ngOnInit() {
     const user = this.userService.getUser();
     if (!user) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dashboard']);
     }
     
-    this.loadData('consumables', 'myChart');
-    this.loadData('Transceiver', 'transceiverChart');
-    this.loadData('MiniSAS', 'miniSASChart');
-    this.loadData('Cat6', 'cat6Chart');
+    this.loadData('consumables', 'c1Chart');
+    this.loadData('c2consumables', 'c2Chart');
+   
   }
 
   ngAfterViewInit() {
@@ -51,15 +49,10 @@ export class HomePage implements OnInit, AfterViewInit {
         case 'consumables':
           this.consumablesData = data;
           break;
-        case 'Transceiver':
-          this.transceiverData = data;
+        case 'c2consumables':
+          this.C2consumablesData = data;
           break;
-        case 'MiniSAS':
-          this.miniSASData = data;
-          break;
-        case 'Cat6':
-          this.cat6Data = data;
-          break;
+        
       }
       this.createChart(chartId, data);
     });
@@ -186,6 +179,6 @@ export class HomePage implements OnInit, AfterViewInit {
 
   logout() {
     this.userService.clearUser();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/dashboard']);
   }
 }

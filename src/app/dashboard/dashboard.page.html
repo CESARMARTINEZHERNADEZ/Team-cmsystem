@@ -1,0 +1,49 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-buttons slot="end">
+       <!--<ion-button routerLink="/life">life</ion-button>-->
+     <!--  <ion-button routerLink="/cycle">cycle</ion-button>-->
+      <ion-button routerLink="/login">login</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Dashboard</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Agrega un ion-segment para cambiar entre las colecciones -->
+  <ion-segment [(ngModel)]="selectedCollection">
+    <ion-segment-button *ngFor="let collection of collections" [value]="collection.name">
+      {{ collection.displayName }}
+    </ion-segment-button>
+  </ion-segment>
+
+  <div class="dashboard-container">
+    <div *ngFor="let collection of collections">
+
+      <div *ngIf="selectedCollection === collection.name">
+        <div class="collection-row">
+          <div *ngFor="let doc of documents[collection.name]" class="collection-item">
+            <ion-button [ngClass]="getButtonClass(doc)" (click)="toggleDetails(doc)">
+              {{ doc.Consumable }}
+            </ion-button>
+            <p>Available {{ doc.SubTotal }}</p>
+            <div *ngIf="doc.showDetails" class="details">
+              <p>Minimum Level: {{ doc.MinimumLevel }}</p>
+              <p>Maximum Level: {{ doc.MaximumLevel }}</p>
+              <p>Lend: {{ doc.lend }}</p>
+              <p>Damage: {{ doc.damage }}</p>
+              <p>Life cycle end: {{ doc.life }}</p>
+              <p>Total: {{ doc.total }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ion-content>

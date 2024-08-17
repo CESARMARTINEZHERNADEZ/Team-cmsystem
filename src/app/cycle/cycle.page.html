@@ -1,0 +1,20 @@
+<ion-content>
+  <ion-header [translucent]="true">
+    <ion-toolbar color="primary">
+      <ion-title>Spare Control CMSystem</ion-title>
+      <ion-buttons slot="end">
+        <ion-button routerLink="/dashboard">Dashboard</ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+ 
+  <ion-button (click)="openCreateCollectionAlert()">Create Collection</ion-button>
+
+
+  <ion-list>
+    <ion-item *ngFor="let collection of collections">
+      {{ collection }}
+      <ion-button (click)="openAddConsumableAlert(collection)">Add Consumable</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

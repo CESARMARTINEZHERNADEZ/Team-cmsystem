@@ -20,7 +20,7 @@
 
     <div class="butt">
       <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
-      <ion-button class="buttcounter" routerLink="/c1counter">Counter</ion-button>
+      <ion-button class="buttcounter" routerLink="/c2counter">Counter</ion-button>
       <ion-button (click)="addConsumable()" color="danger">Add</ion-button>
     </div>
   </div>
@@ -99,6 +99,7 @@
     </div>
   </ion-card-content>
 </ion-card>
+
 <!-- Life -->
 <ion-button (click)="toggleLife()" expand="full">Life</ion-button>
 
@@ -135,7 +136,6 @@
 </ion-card>
 
 
-<!-- damage -->
 <ion-button (click)="toggledamage()" expand="full">Damage</ion-button>
 
 <ion-card *ngIf="showDamage">
@@ -169,6 +169,9 @@
     </div>
   </ion-card-content>
 </ion-card>
+
+
+
 
   <!-- Historial -->
   <ion-button (click)="toggleTable()" expand="full">History</ion-button>

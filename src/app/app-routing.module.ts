@@ -5,7 +5,7 @@ const routes: Routes = [
   
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dashboard',
     pathMatch: 'full'
   },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginPageModule) },
@@ -24,7 +24,6 @@ const routes: Routes = [
     loadChildren: () => import('./c1table/c1table.module').then( m => m.C1tablePageModule)
   },
   
-  
   {
     path: 'signin',
     loadChildren: () => import('./signin/signin.module').then( m => m.SigninPageModule)
@@ -34,33 +33,30 @@ const routes: Routes = [
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
   },
   {
-    path: 'min-sas-counter',
-    loadChildren: () => import('./min-sas-counter/min-sas-counter.module').then( m => m.MinSasCounterPageModule)
-  },
-  {
-    path: 'min-sas-table',
-    loadChildren: () => import('./min-sas-table/min-sas-table.module').then( m => m.MinSasTablePageModule)
-  },
-  {
-    path: 'cat6counter',
-    loadChildren: () => import('./cat6counter/cat6counter.module').then( m => m.Cat6counterPageModule)
-  },
-  {
-    path: 'cat6table',
-    loadChildren: () => import('./cat6table/cat6table.module').then( m => m.Cat6tablePageModule)
-  },
-  {
-    path: 'transceivercounter',
-    loadChildren: () => import('./transceivercounter/transceivercounter.module').then( m => m.TransceivercounterPageModule)
-  },
-  {
-    path: 'transceivertable',
-    loadChildren: () => import('./transceivertable/transceivertable.module').then( m => m.TransceivertablePageModule)
-  },
-  {
     path: 'life',
     loadChildren: () => import('./life/life.module').then( m => m.LifePageModule)
   },
+  {
+    path: 'dashboard',
+    loadChildren: () => import('./dashboard/dashboard.module').then( m => m.DashboardPageModule)
+  },
+  {
+    path: 'c2counter',
+    loadChildren: () => import('./c2counter/c2counter.module').then( m => m.C2counterPageModule)
+  },
+  {
+    path: 'c2table',
+    loadChildren: () => import('./c2table/c2table.module').then( m => m.C2tablePageModule)
+  },
+  {
+    path: 'cycle',
+    loadChildren: () => import('./cycle/cycle.module').then( m => m.CyclePageModule)
+  },
+
+
+  
+ 
+
 
  
   

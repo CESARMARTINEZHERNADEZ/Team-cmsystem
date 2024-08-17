@@ -2,6 +2,11 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+
+
 
 @Injectable({
   providedIn: 'root',
@@ -21,12 +26,15 @@ export class FirebaseService {
     return this.firestore.collection(path).add(data);
   }
 
-  setcollecion(path: string, data: any) {
+  setcollecion(path: string, data: any) { 
     return addDoc(collection(getFirestore(), path), data);
   }
 
   getCollection(path: string, collectionQuery?: any) {
     return this.firestore.collection(path, collectionQuery).valueChanges();
+  }
+  getCollectionlend(collectionName: string) {
+    return this.firestore.collection(collectionName).valueChanges({ idField: 'Id' });
   }
 
   getCollectionByEmail(path: string, email: string) {
@@ -49,6 +57,13 @@ export class FirebaseService {
     return this.firestore.doc(`${path}/${documentId}`).delete();
   }
 
+  deleteDocumentlend(collectionName: string, docId: string) {
+    console.log(`Deleting document ${docId} from collection ${collectionName}`);
+    return this.firestore.collection(collectionName).doc(docId).delete();
+  }
+
+ 
+
   getCollectionByClockNumberAndPassword(path: string, clockNumber: string, password: string) {
     return this.firestore.collection(path, ref => ref
       .where('clockNumber', '==', clockNumber)
@@ -59,32 +74,68 @@ export class FirebaseService {
   setHistory(path: string, data: any) {
     return this.firestore.collection(path).add(data);
   }
-  updateScrapFiber(id: string, data: any) {
-    return this.firestore.doc(`scrapfibers/${id}`).update(data);
-  }
 
-  deleteScrapFiber(id: string) {
-    return this.firestore.doc(`scrapfibers/${id}`).delete();
-  }
-  updateLend(id: string, data: any) {
-    return this.firestore.doc(`lendFibers/${id}`).update(data);
-  }
-
-  deleteLend(id: string) {
-    return this.firestore.doc(`lendFibers/${id}`).delete();
-  }
 
   getCollectionData(collection: string) {
     return this.firestore.collection(collection).valueChanges();
   }
   getDocument(path: string, documentId: string) {
-    return this.firestore.collection(path).doc(documentId).get();
+    return this.firestore.doc(`${path}/${documentId}`).get();
+  }
+  getDocument2(collectionName: string, documentId: string): Promise<any> {
+    return this.firestore.collection(collectionName).doc(documentId).get().toPromise();
+  }
+ 
+  getDocument1(collection: string, documentId: string) {
+    return this.firestore.collection(collection).doc(documentId).get();
+  }
+  
+  update1(path: string, data: any) {
+    return this.firestore.doc(path).update(data);
   }
 
-  updateConsumable(id: string, data: any) {
-    return this.firestore.doc(`life/${id}`).update(data);
+
+
+
+  
+  createCollection(collectionName: string) {
+    return this.firestore.collection(collectionName).add({});
   }
-  deleteConsumable(id: string) {
-    return this.firestore.doc(`life/${id}`).delete();
+
+  saveCollections(collections: string[]) {
+    return this.firestore.collection('savedCollections').doc('collectionsList').set({ collections });
   }
+
+  getCollections(): Observable<string[]> {
+    return this.firestore
+      .collection('savedCollections')
+      .doc<{ collections: string[] }>('collectionsList')
+      .valueChanges()
+      .pipe(
+        map((doc) => {
+          return doc?.collections || [];
+        })
+      );
+  }
+
+  addConsumableToCollection(collectionName: string, consumable: any) {
+    return this.firestore.collection(collectionName).add(consumable);
+  }
+
+
+ // Método para actualizar un documento
+ updateDocument(collectionName: string, documentId: string, data: any): Promise<void> {
+  return this.firestore.collection(collectionName).doc(documentId).update(data)
+    .then(() => {
+      console.log(`Document ${documentId} in ${collectionName} updated successfully!`);
+    })
+    .catch((error) => {
+      console.error(`Error updating document ${documentId} in ${collectionName}:`, error);
+      throw error; // Re-throw the error if you want to handle it outside the function
+    });
 }
+
+
+}
+
+

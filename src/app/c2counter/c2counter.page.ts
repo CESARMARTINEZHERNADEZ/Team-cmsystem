@@ -5,11 +5,11 @@ import { UserService } from '../services/User.Service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-c1counter',
-  templateUrl: './c1counter.page.html',
-  styleUrls: ['./c1counter.page.scss'],
+  selector: 'app-c2counter',
+  templateUrl: './c2counter.page.html',
+  styleUrls: ['./c2counter.page.scss'],
 })
-export class C1counterPage implements OnInit {
+export class C2counterPage implements OnInit {
   public consumables: any[] = [];
   public filteredConsumables: any[] = [];
   public partNumber: string = '';
@@ -40,7 +40,7 @@ export class C1counterPage implements OnInit {
   }
 
   loadConsumables() {
-    this.firebaseService.getCollection('consumables').subscribe((data: any[]) => {
+    this.firebaseService.getCollection('c2consumables').subscribe((data: any[]) => {
       this.consumables = data;
       this.showActionButtons();
     });
@@ -113,16 +113,16 @@ export class C1counterPage implements OnInit {
               this.updateTotal(consumable, consumable.SubTotal + quantity, 'increase'); 
             } else if (action === 'lend') {
               this.updateTotal(consumable, consumable.SubTotal - quantity, 'decrease');
-              this.firebaseService.setCollection('c1lend', updateData);
+              this.firebaseService.setCollection('c2lend', updateData);
             } else if (action === 'damage') {
               this.updateTotal(consumable, consumable.SubTotal - quantity, 'decrease');
-              this.firebaseService.setCollection('c1damaged', updateData);
+              this.firebaseService.setCollection('c2damaged', updateData);
             } else if (action === 'endOfLife') {
               this.updateTotal(consumable, consumable.SubTotal - quantity, 'decrease');
-              this.firebaseService.setCollection('c1endOfLife', updateData);
+              this.firebaseService.setCollection('c2endOfLife', updateData);
             }
   
-            this.firebaseService.setCollection('HistoryC1', {
+            this.firebaseService.setCollection('HistoryC2', {
               user: this.userService.getUser(),
               reason: data.reason,
               date: new Date(),
@@ -150,7 +150,7 @@ export class C1counterPage implements OnInit {
       SubTotal: newTotal
     };
 
-    this.firebaseService.update(`consumables/${consumable.Id}`, updatedConsumable)
+    this.firebaseService.update(`c2consumables/${consumable.Id}`, updatedConsumable)
       .then(() => {
         consumable.SubTotal = newTotal;
       })

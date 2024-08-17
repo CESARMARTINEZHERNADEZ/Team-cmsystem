@@ -5,11 +5,11 @@ import { Router } from '@angular/router';
 import { UserService } from '../services/User.Service'; 
 
 @Component({
-  selector: 'app-c1table',
-  templateUrl: './c1table.page.html',
-  styleUrls: ['./c1table.page.scss'],
+  selector: 'app-c2table',
+  templateUrl: './c2table.page.html',
+  styleUrls: ['./c2table.page.scss'],
 })
-export class C1tablePage implements OnInit {
+export class C2tablePage implements OnInit {
   public consumables: any[] = [];
   public selectedOption: string = 'option1';
   public selectedHistoryOption: string = 'actionAsc';
@@ -26,8 +26,8 @@ export class C1tablePage implements OnInit {
   public paginatedHistory: any[] = [];
   public totalPages = 0;
   public c1lend: any[] = [];
-  public c1damage: any[] = [];
   public c1life: any[] = [];
+  public c1damage: any[] = [];
 
   constructor(
     private alertController: AlertController,
@@ -39,7 +39,7 @@ export class C1tablePage implements OnInit {
     this.selectedOption = 'option1';
     this.selectedHistoryOption = 'actionAsc';
 
-    this.firebaseService.getCollection('HistoryC1').subscribe((historyData: any[]) => {
+    this.firebaseService.getCollection('HistoryC2').subscribe((historyData: any[]) => {
       this.History = historyData.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
         const date = new Date(timestamp);
@@ -67,14 +67,14 @@ export class C1tablePage implements OnInit {
   }
 
   loadConsumables() {
-    this.firebaseService.getCollection('consumables').subscribe((data: any[]) => {
+    this.firebaseService.getCollection('c2consumables').subscribe((data: any[]) => {
       this.consumables = data;
       this.sortConsumables();
     });
   }
 
   loadLendData() {
-    this.firebaseService.getCollectionlend('c1lend').subscribe((data: any[]) => {
+    this.firebaseService.getCollectionlend('c2lend').subscribe((data: any[]) => {
       this.c1lend = data.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
         const date = new Date(timestamp);
@@ -91,8 +91,9 @@ export class C1tablePage implements OnInit {
     });
   }
   
+  
   loaddamageData() {
-    this.firebaseService.getCollectionlend('c1damaged').subscribe((data: any[]) => {
+    this.firebaseService.getCollectionlend('c2damaged').subscribe((data: any[]) => {
       this.c1damage = data.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
         const date = new Date(timestamp);
@@ -108,8 +109,9 @@ export class C1tablePage implements OnInit {
       this.updateConsumablesDamage();
     });
   }
+
   loadLifeData() {
-    this.firebaseService.getCollectionlend('c1endOfLife').subscribe((data: any[]) => {
+    this.firebaseService.getCollectionlend('c2endOfLife').subscribe((data: any[]) => {
       this.c1life = data.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
         const date = new Date(timestamp);
@@ -126,7 +128,6 @@ export class C1tablePage implements OnInit {
     });
   }
 
-
   updateConsumablesLend() {
     const lendQuantities: { [key: string]: number } = {};
   
@@ -140,14 +141,14 @@ export class C1tablePage implements OnInit {
     this.consumables.forEach((consumable) => {
       consumable.lend = lendQuantities[consumable.Consumable] || 0;
       consumable.total = this.calculateTotal(consumable);
-      this.firebaseService.update(`consumables/${consumable.Id}`, { 
+      this.firebaseService.update(`c2consumables/${consumable.Id}`, { 
         lend: consumable.lend,
         total: consumable.total
       })
       .catch((error) => console.error('Error updating lend and total fields:', error));
     });
   }
-  
+ 
   updateConsumablesDamage() {
     const damageQuantities: { [key: string]: number } = {};
   
@@ -161,13 +162,14 @@ export class C1tablePage implements OnInit {
     this.consumables.forEach((consumable) => {
       consumable.damage = damageQuantities[consumable.Consumable] || 0;
       consumable.total = this.calculateTotal(consumable);
-      this.firebaseService.update(`consumables/${consumable.Id}`, { 
+      this.firebaseService.update(`c2consumables/${consumable.Id}`, { 
         damage: consumable.damage,
         total: consumable.total
       })
       .catch((error) => console.error('Error updating damage and total fields:', error));
     });
   }
+  
   updateConsumablesLife() {
     const lifeQuantities: { [key: string]: number } = {};
   
@@ -181,16 +183,13 @@ export class C1tablePage implements OnInit {
     this.consumables.forEach((consumable) => {
       consumable.life = lifeQuantities[consumable.Consumable] || 0;
       consumable.total = this.calculateTotal(consumable);
-      this.firebaseService.update(`consumables/${consumable.Id}`, { 
+      this.firebaseService.update(`c2consumables/${consumable.Id}`, { 
         life: consumable.life,
         total: consumable.total
       })
       .catch((error) => console.error('Error updating life and total fields:', error));
     });
   }
- 
-  
-
  
 
   sortConsumables() {
@@ -255,18 +254,21 @@ export class C1tablePage implements OnInit {
       this.loadLendData();
     }
   }
+
   toggledamage() {
     this.showDamage = !this.showDamage;
     if (this.showDamage) {
       this.loaddamageData();
     }
   }
+
   toggleLife() {
     this.showLife = !this.showLife;
     if (this.showLife) {
       this.loadLifeData();
     }
   }
+
 
   previousPage() {
     if (this.currentPage > 1) {
@@ -327,7 +329,7 @@ export class C1tablePage implements OnInit {
                 {
                   text: 'ACCEPT',
                   handler: async (reasonData) => {
-                    this.firebaseService.setHistory('HistoryC1', {
+                    this.firebaseService.setHistory('HistoryC2', {
                       user: this.userService.getUser(), 
                       reason: reasonData.reason,
                       date: new Date(),
@@ -335,7 +337,7 @@ export class C1tablePage implements OnInit {
                       consumable: newConsumable
                     });
   
-                    this.firebaseService.setCollectionWithId('consumables', newId, newConsumable)
+                    this.firebaseService.setCollectionWithId('c2consumables', newId, newConsumable)
                       .then(() => this.loadConsumables())
                       .catch((error) => console.error('Error adding consumable:', error));
                   }
@@ -390,7 +392,7 @@ export class C1tablePage implements OnInit {
                     };
                     updatedConsumable.total = this.calculateTotal(updatedConsumable);
   
-                    this.firebaseService.setHistory('HistoryC1', {
+                    this.firebaseService.setHistory('HistoryC2', {
                       user: this.userService.getUser(),
                       reason: reasonData.reason,
                       date: new Date(),
@@ -398,7 +400,7 @@ export class C1tablePage implements OnInit {
                       consumable: updatedConsumable
                     });
   
-                    this.firebaseService.update(`consumables/${consumable.Id}`, updatedConsumable)
+                    this.firebaseService.update(`c2consumables/${consumable.Id}`, updatedConsumable)
                       .then(() => this.loadConsumables())
                       .catch((error) => console.error('Error updating consumable:', error));
                   }
@@ -427,7 +429,7 @@ export class C1tablePage implements OnInit {
         {
           text: 'NEXT',
           handler: async (reasonData) => {
-            await this.firebaseService.setHistory('HistoryC1', {
+            await this.firebaseService.setHistory('HistoryC2', {
               user: this.userService.getUser(),
               reason: reasonData.reason,
               date: new Date(),
@@ -443,7 +445,7 @@ export class C1tablePage implements OnInit {
                 {
                   text: 'DELETE',
                   handler: () => {
-                    this.firebaseService.deleteDocument('consumables', consumable.Id)
+                    this.firebaseService.deleteDocument('c2consumables', consumable.Id)
                       .then(() => this.loadConsumables())
                       .catch((error) => console.error('Error deleting consumable:', error));
                   }
@@ -487,10 +489,10 @@ export class C1tablePage implements OnInit {
                   handler: async () => {
                     try {
                       // Delete the document from the 'c1lend' collection
-                      await this.firebaseService.deleteDocumentlend('c1lend', item.Id);
+                      await this.firebaseService.deleteDocumentlend('c2lend', item.Id);
                    
                       // Log the deletion reason and user information in history
-                      await this.firebaseService.setHistory('HistoryC1', {
+                      await this.firebaseService.setHistory('HistoryC2', {
                        
                         user: this.userService.getUser(),
                         reason: reasonData.reason,
@@ -509,7 +511,7 @@ export class C1tablePage implements OnInit {
                         consumable.lend -= lendQuantity; // Subtract the lend quantity
                         consumable.SubTotal += lendQuantity; // Add the lend quantity back to SubTotal
   
-                        await this.firebaseService.update(`consumables/${consumable.Id}`, {
+                        await this.firebaseService.update(`c2consumables/${consumable.Id}`, {
                           lend: consumable.lend,
                           SubTotal: consumable.SubTotal
                         });

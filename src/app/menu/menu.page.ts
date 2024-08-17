@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirebaseService } from '../services/firebase.servicetest';
 import { UserService } from '../services/User.Service';
+
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.page.html',
@@ -9,6 +10,7 @@ import { UserService } from '../services/User.Service';
 })
 export class MenuPage implements OnInit {
   buttonStyles: { [key: string]: string } = {};
+  consumablesByCollection: { [key: string]: string[] } = {}; // To store consumables for each collection
 
   constructor(
     private userService: UserService,
@@ -19,7 +21,7 @@ export class MenuPage implements OnInit {
   ngOnInit() {
     const user = this.userService.getUser();
     if (!user) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/dashboard']);
     }
 
     this.loadButtonStyles();
@@ -27,33 +29,41 @@ export class MenuPage implements OnInit {
 
   logout() {
     this.userService.clearUser();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/dashboard']);
   }
 
   loadButtonStyles() {
     const collections = {
       'c1counter': 'consumables',
-      'min-sas-counter': 'MiniSAS',
-      'cat6counter': 'Cat6',
-      'transceivercounter': 'Transceiver'
+      'c2counter': 'c2consumables',
     };
 
     for (const [route, collection] of Object.entries(collections)) {
       this.firebaseService.getCollectionData(collection).subscribe((data: any[]) => {
-        let subtotal = 0;
-        let minLevel = 0;
-        let maxLevel = 0;
+        let shouldStyleRed = false;
+        let shouldStyleBlue = false;
+
+        // Initialize the list of consumables for each route
+        this.consumablesByCollection[route] = [];
 
         data.forEach(item => {
-          subtotal += item.SubTotal || 0;
-          minLevel = item.MinimumLevel || minLevel;
-          maxLevel = item.MaximumLevel || maxLevel;
+          // Add the consumable name to the respective route list
+          this.consumablesByCollection[route].push(item.Consumable);
+
+          if (item.SubTotal <= item.MinimumLevel) {
+            shouldStyleRed = true;
+          }
+          if (item.SubTotal >= item.MaximumLevel) {
+            shouldStyleBlue = true;
+          }
         });
 
-        if (subtotal <= minLevel) {
+        if (shouldStyleRed) {
           this.buttonStyles[route] = 'red-button';
-        } else if (maxLevel >= subtotal) {
+        } else if (shouldStyleBlue) {
           this.buttonStyles[route] = 'blue-button';
+        } else {
+          this.buttonStyles[route] = 'default-button';
         }
       });
     }
