@@ -22,12 +22,24 @@ export class FirebaseService {
     return this.firestore.collection(path).doc(id).set(data);
   }
 
+
+  generateDocId(collectionPath: string): string {
+    return this.firestore.collection(collectionPath).doc().ref.id;
+  }
+
   setCollection(path: string, data: any) {
     return this.firestore.collection(path).add(data);
   }
 
+  setCollectionlife(collectionPath: string, data: any, docId: string) {
+    return this.firestore.collection(collectionPath).doc(docId).set(data);
+  }
+
   setcollecion(path: string, data: any) { 
     return addDoc(collection(getFirestore(), path), data);
+  }
+  getCollectionlife(path: string, collectionQuery?: any): Observable<any[]> {
+    return this.firestore.collection(path, collectionQuery).valueChanges();
   }
 
   getCollection(path: string, collectionQuery?: any) {
@@ -56,6 +68,8 @@ export class FirebaseService {
   deleteDocument(path: string, documentId: string) {
     return this.firestore.doc(`${path}/${documentId}`).delete();
   }
+
+
 
   deleteDocumentlend(collectionName: string, docId: string) {
     console.log(`Deleting document ${docId} from collection ${collectionName}`);
@@ -95,47 +109,11 @@ export class FirebaseService {
   }
 
 
-
-
-  
-  createCollection(collectionName: string) {
-    return this.firestore.collection(collectionName).add({});
+  updateDocument(path: string, documentId: string, data: any) {
+    return this.firestore.collection(path).doc(documentId).update(data);
   }
 
-  saveCollections(collections: string[]) {
-    return this.firestore.collection('savedCollections').doc('collectionsList').set({ collections });
-  }
-
-  getCollections(): Observable<string[]> {
-    return this.firestore
-      .collection('savedCollections')
-      .doc<{ collections: string[] }>('collectionsList')
-      .valueChanges()
-      .pipe(
-        map((doc) => {
-          return doc?.collections || [];
-        })
-      );
-  }
-
-  addConsumableToCollection(collectionName: string, consumable: any) {
-    return this.firestore.collection(collectionName).add(consumable);
-  }
-
-
- // Método para actualizar un documento
- updateDocument(collectionName: string, documentId: string, data: any): Promise<void> {
-  return this.firestore.collection(collectionName).doc(documentId).update(data)
-    .then(() => {
-      console.log(`Document ${documentId} in ${collectionName} updated successfully!`);
-    })
-    .catch((error) => {
-      console.error(`Error updating document ${documentId} in ${collectionName}:`, error);
-      throw error; // Re-throw the error if you want to handle it outside the function
-    });
-}
-
-
+ 
 }
 
 

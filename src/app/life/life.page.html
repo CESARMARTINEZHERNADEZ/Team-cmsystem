@@ -1,29 +1,28 @@
-<ion-content>
-  <ion-header [translucent]="true">
-    <ion-toolbar color="primary">
-      <ion-title>Spare Control CMSystem</ion-title>
-      <ion-buttons slot="end">
-        <ion-button routerLink="/dashboard">Dashboard</ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/dashboard">Dashboard</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-  <ion-list>
-    <div *ngFor="let collection of collections">
-      <ion-card>
-        <ion-card-header>
-          <ion-card-title text-center>{{ collection.name }}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-list>
-            <ion-item *ngFor="let document of collection.documents">
-              {{ document.name }} - {{ document.lifecyclePercentage | number:'1.0-2' }}% - {{ document.status }}
-              <!-- Pasar el nombre de la colección junto con el documento -->
-              <ion-button slot="end" (click)="resetInitializationDate(document, collection.name)">Reset</ion-button>
-            </ion-item>
-          </ion-list>
-        </ion-card-content>
+<ion-content>
+  <div class="rack-grid">
+    <div *ngFor="let rack of racks">
+      <ion-card [ngClass]="getRackClass(rack)">
+        <ion-card-title>{{ rack }}</ion-card-title>
+        <div *ngFor="let consumable of consumables" [hidden]="consumable.rack !== rack">
+          <ion-item [ngClass]="consumable.cssClass">
+            <ion-label class="consumable-info">
+            <h2>{{ consumable.name }}</h2>
+            <p>Status: {{ consumable.lifecyclePercentage.toFixed(2) }}% - {{ consumable.status }}</p>
+          </ion-label>
+            <ion-button (click)="resetInitializationDate(consumable)">Reset</ion-button>
+          </ion-item>
+        </div>
       </ion-card>
     </div>
-  </ion-list>
+  </div>
 </ion-content>
+

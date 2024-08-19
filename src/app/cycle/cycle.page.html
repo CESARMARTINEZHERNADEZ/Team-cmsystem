@@ -1,20 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/menu">menu</ion-button>
+      <ion-button (click)="logout()">
+        Log out
+      </ion-button>
+
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
 <ion-content>
-  <ion-header [translucent]="true">
-    <ion-toolbar color="primary">
-      <ion-title>Spare Control CMSystem</ion-title>
-      <ion-buttons slot="end">
-        <ion-button routerLink="/dashboard">Dashboard</ion-button>
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
- 
-  <ion-button (click)="openCreateCollectionAlert()">Create Collection</ion-button>
+  <ion-segment [(ngModel)]="selectedRack" (ionChange)="selectRack($event.detail.value?.toString() || 'Rack1')">
+    <ion-segment-button value="Rack1">
+      <ion-label>Rack1</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Rack2">
+      <ion-label>Rack2</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Rack3">
+      <ion-label>Rack3</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Rack4">
+      <ion-label>Rack4</ion-label>
+    </ion-segment-button>
+  </ion-segment>
 
+  <!-- Contenedores de los racks -->
+  <div *ngFor="let consumable of consumables">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ consumable.name }}</ion-card-title>
+        <ion-card-subtitle>Part Number: {{ consumable.partNumber }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Initialization Date: {{ consumable.initializationDate }}</p>
+        <p>Years of Life: {{ consumable.yearsOfLife }}</p>
+        <ion-button (click)="updateConsumable(consumable)">Update</ion-button>
+        <ion-button color="danger" (click)="deleteConsumable(consumable.id)">Delete</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
 
-  <ion-list>
-    <ion-item *ngFor="let collection of collections">
-      {{ collection }}
-      <ion-button (click)="openAddConsumableAlert(collection)">Add Consumable</ion-button>
-    </ion-item>
-  </ion-list>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="addConsumable()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
 </ion-content>

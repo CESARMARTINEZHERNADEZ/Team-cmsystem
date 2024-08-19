@@ -2,6 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Spare Control CMSystem</ion-title>
     <ion-buttons slot="end">
+      <ion-button routerLink="/menu">menu</ion-button>
       <ion-button (click)="logout()">
         log out
       </ion-button>
@@ -16,15 +17,12 @@
     </ion-toolbar>
   </ion-header>
 
-  <div class="button-container">
-    <ion-button class="menu-button" routerLink="/menu">Menu</ion-button>
-  </div>
 
-  <h2>Drawer 1</h2>
+  <h2>Cage 1</h2>
   <div class="charts-container">
     <canvas id="c1Chart"></canvas>  
   </div>
-  <h2>Drawer 2</h2>
+  <h2>Cage 2</h2>
 <div class="charts-container">
 
   <canvas id="c2Chart"></canvas>

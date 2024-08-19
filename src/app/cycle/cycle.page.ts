@@ -4,14 +4,15 @@ import { FirebaseService } from '../services/firebase.servicetest';
 import { Router } from '@angular/router';
 import { UserService } from '../services/User.Service';
 
-
 @Component({
   selector: 'app-cycle',
   templateUrl: './cycle.page.html',
   styleUrls: ['./cycle.page.scss'],
 })
 export class CyclePage implements OnInit {
-  collections: string[] = []; // To store collection names
+
+  selectedRack: string = 'Rack1'; // Inicializa con un valor por defecto.
+  consumables: any[] = [];
 
   constructor(
     private userService: UserService,
@@ -21,111 +22,147 @@ export class CyclePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadCollections(); // Load collections on initialization
+    const user = this.userService.getUser();
+    if (!user) {
+      this.router.navigate(['/dashboard']);
+    }
+
+    this.loadConsumables();
+    
+  }
+  logout() {
+    this.userService.clearUser();
+    this.router.navigate(['/dashboard']);
   }
 
-  async openCreateCollectionAlert() {
+  loadConsumables() {
+    this.firebaseService.getCollectionlife(this.selectedRack).subscribe(data => {
+      this.consumables = data as any[];
+    });
+  }
+
+  selectRack(rack: string | undefined) {
+    this.selectedRack = rack || 'Rack1'; // Asigna un valor por defecto si es undefined
+    this.loadConsumables();
+  }
+
+  async addConsumable() {
     const alert = await this.alertController.create({
-      header: 'Create Collection',
+      header: 'Add Consumable',
       inputs: [
         {
-          name: 'collectionName',
+          name: 'name',
           type: 'text',
-          placeholder: 'Enter collection name',
-        },
-      ],
-      buttons: [
-        {
-          text: 'Cancel',
-          role: 'cancel',
-          cssClass: 'secondary',
-        },
-        {
-          text: 'Create',
-          handler: (data) => {
-            if (data.collectionName) {
-              this.createCollection(data.collectionName);
-            }
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-  }
-
-  createCollection(collectionName: string) {
-    this.firebaseService.createCollection(collectionName).then(() => {
-      this.collections.push(collectionName);
-      this.saveCollections(); // Save the updated collections list
-    });
-  }
-
-  loadCollections() {
-    this.firebaseService.getCollections().subscribe((collections: string[]) => {
-      this.collections = collections;
-    });
-  }
-
-  saveCollections() {
-    this.firebaseService.saveCollections(this.collections); // Save collections to Firebase or storage
-  }
-
-  async openAddConsumableAlert(collectionName: string) {
-    const alert = await this.alertController.create({
-      header: `Add Consumable to ${collectionName}`,
-      inputs: [
-        {
-          name: 'consumableName',
-          type: 'text',
-          placeholder: 'Enter consumable name',
-        },
-        {
-          name: 'initializationDate',
-          type: 'date',
-          placeholder: 'Enter initialization date',
-        },
-        {
-          name: 'yearsOfLife',
-          type: 'number',
-          placeholder: 'Enter years of life',
+          placeholder: 'Consumable Name'
         },
         {
           name: 'partNumber',
           type: 'text',
-          placeholder: 'Enter part number',
+          placeholder: 'Part Number'
         },
+        {
+          name: 'initializationDate',
+          type: 'date',
+          placeholder: 'Initialization Date'
+        },
+        {
+          name: 'yearsOfLife',
+          type: 'number',
+          placeholder: 'Years of Life'
+        }
       ],
       buttons: [
         {
           text: 'Cancel',
           role: 'cancel',
-          cssClass: 'secondary',
+          handler: () => {}
         },
         {
           text: 'Add',
-          handler: (data) => {
-            if (data.consumableName && data.initializationDate && data.yearsOfLife && data.partNumber) {
-              this.addConsumable(collectionName, data);
+          handler: async (data) => {
+            if (data.name && data.partNumber && data.initializationDate && data.yearsOfLife) {
+              // Generate a unique ID for the new consumable
+              const newId = this.firebaseService.generateDocId(this.selectedRack);
+  
+              const newConsumable = {
+                id: newId,
+                name: data.name,
+                partNumber: data.partNumber,
+                initializationDate: data.initializationDate,
+                yearsOfLife: data.yearsOfLife
+              };
+  
+              // Save the new consumable with the generated ID
+              await this.firebaseService.setCollectionlife(this.selectedRack, newConsumable, newId);
+              this.loadConsumables();
             }
-          },
-        },
-      ],
+          }
+        }
+      ]
     });
+    await alert.present();
+  }
+  
 
+  async updateConsumable(consumable: any) {
+    const alert = await this.alertController.create({
+      header: 'Update Consumable',
+      inputs: [
+        {
+          name: 'name',
+          type: 'text',
+          value: consumable.name,
+          placeholder: 'Consumable Name'
+        },
+        {
+          name: 'partNumber',
+          type: 'text',
+          value: consumable.partNumber,
+          placeholder: 'Part Number'
+        },
+        {
+          name: 'initializationDate',
+          type: 'date',
+          value: consumable.initializationDate,
+          placeholder: 'Initialization Date'
+        },
+        {
+          name: 'yearsOfLife',
+          type: 'number',
+          value: consumable.yearsOfLife,
+          placeholder: 'Years of Life'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {}
+        },
+        {
+          text: 'Update',
+          handler: async (data) => {
+            if (data.name && data.partNumber && data.initializationDate && data.yearsOfLife) {
+              const updatedConsumable = {
+                name: data.name,
+                partNumber: data.partNumber,
+                initializationDate: data.initializationDate,
+                yearsOfLife: data.yearsOfLife
+              };
+              await this.firebaseService.updateDocument(this.selectedRack, consumable.id, updatedConsumable);
+              this.loadConsumables();
+            }
+          }
+        }
+      ]
+    });
     await alert.present();
   }
 
-  addConsumable(collectionName: string, data: any) {
-    const newId = this.firebaseService.firestore.createId();
-    const consumable = {
-      Id: newId,// Generate a unique ID for the consumable
-      name: data.consumableName,
-      initializationDate: data.initializationDate,
-      yearsOfLife: data.yearsOfLife,
-      partNumber: data.partNumber,
-    };
-
-    this.firebaseService.addConsumableToCollection(collectionName, consumable);
+  async deleteConsumable(consumableId: string) {
+    await this.firebaseService.deleteDocument(this.selectedRack, consumableId);
+    this.loadConsumables();
   }
+
+
 }

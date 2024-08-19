@@ -53,3 +53,39 @@
   display: flex;
   justify-content: flex-end;
 }
+.soon {
+  background-color: yellow !important;
+
+}
+
+.replace {
+  background-color: red !important;
+  color:#000000;
+}
+
+.rack-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+
+.consumable-info h2 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.consumable-info p {
+  margin: 0;
+  font-size: 14px;
+}
+
+ion-card {
+  margin-bottom: 16px;
+}
+
+ion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
