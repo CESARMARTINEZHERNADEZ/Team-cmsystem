@@ -9,7 +9,7 @@ import * as moment from 'moment';
   styleUrls: ['./life.page.scss'],
 })
 export class LifePage implements OnInit {
-  racks = ['Rack1', 'Rack2', 'Rack3', 'Rack4'];
+  racks = ['Rack 1 S1', 'Rack 2 S1', 'Rack 1 S2', 'Rack 2 S2'];
   consumables: any[] = [];
 
   constructor(
@@ -68,7 +68,7 @@ export class LifePage implements OnInit {
 
   async resetInitializationDate(consumable: any) {
     const alert = await this.alertController.create({
-      header: 'Reset Initialization Date',
+      header: 'Reset Life Cycle',
       inputs: [
         {
           name: 'employeeNumber',

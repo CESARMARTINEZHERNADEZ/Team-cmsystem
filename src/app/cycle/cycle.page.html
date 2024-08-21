@@ -13,18 +13,18 @@
 
 
 <ion-content>
-  <ion-segment [(ngModel)]="selectedRack" (ionChange)="selectRack($event.detail.value?.toString() || 'Rack1')">
-    <ion-segment-button value="Rack1">
-      <ion-label>Rack1</ion-label>
+  <ion-segment [(ngModel)]="selectedRack" (ionChange)="selectRack($event.detail.value?.toString() || 'Rack1')"> 
+    <ion-segment-button value="Rack 1 S1">
+      <ion-label>Rack 1 S1</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="Rack2">
-      <ion-label>Rack2</ion-label>
+    <ion-segment-button value="Rack 2 S1">
+      <ion-label>Rack 2 S1</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="Rack3">
-      <ion-label>Rack3</ion-label>
+    <ion-segment-button value="Rack 1 S2">
+      <ion-label>Rack 1 S2</ion-label>
     </ion-segment-button>
-    <ion-segment-button value="Rack4">
-      <ion-label>Rack4</ion-label>
+    <ion-segment-button value="Rack 2 S2">
+      <ion-label>Rack 2 S2</ion-label>
     </ion-segment-button>
   </ion-segment>
 
@@ -48,6 +48,9 @@
     <ion-fab-button (click)="addConsumable()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
+    <ion-fab-button (click)="showHistory()">
+      <ion-icon name="time"></ion-icon>
+    </ion-fab-button>
   </ion-fab>
-
+  
 </ion-content>

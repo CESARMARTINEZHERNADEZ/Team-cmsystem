@@ -11,7 +11,7 @@ import { UserService } from '../services/User.Service';
 })
 export class CyclePage implements OnInit {
 
-  selectedRack: string = 'Rack1'; // Inicializa con un valor por defecto.
+  selectedRack: string = 'Rack 1 S1'; // Inicializa con un valor por defecto.
   consumables: any[] = [];
 
   constructor(
@@ -28,8 +28,8 @@ export class CyclePage implements OnInit {
     }
 
     this.loadConsumables();
-    
   }
+
   logout() {
     this.userService.clearUser();
     this.router.navigate(['/dashboard']);
@@ -42,7 +42,7 @@ export class CyclePage implements OnInit {
   }
 
   selectRack(rack: string | undefined) {
-    this.selectedRack = rack || 'Rack1'; // Asigna un valor por defecto si es undefined
+    this.selectedRack = rack || 'Rack 1 S1'; // Asigna un valor por defecto si es undefined
     this.loadConsumables();
   }
 
@@ -102,7 +102,6 @@ export class CyclePage implements OnInit {
     });
     await alert.present();
   }
-  
 
   async updateConsumable(consumable: any) {
     const alert = await this.alertController.create({
@@ -160,9 +159,77 @@ export class CyclePage implements OnInit {
   }
 
   async deleteConsumable(consumableId: string) {
-    await this.firebaseService.deleteDocument(this.selectedRack, consumableId);
-    this.loadConsumables();
+    const alert = await this.alertController.create({
+      header: 'Confirm Delete',
+      message: 'Are you sure you want to delete this consumable?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: () => {
+            // Acción si el usuario cancela la eliminación
+          }
+        },
+        {
+          text: 'Delete',
+          handler: async () => {
+            // Acción si el usuario confirma la eliminación
+            await this.firebaseService.deleteDocument(this.selectedRack, consumableId);
+            this.loadConsumables();
+          }
+        }
+      ]
+    });
+  
+    await alert.present();
   }
 
+  async showHistory() {
+    const history = await this.firebaseService.getHistorycicle(this.selectedRack);
 
+    const historyText = history.map(item => `
+      Consumable: ${item.consumable}
+      Date: ${item.date}
+      Clocknumber: ${item.employeeNumber}
+    
+    `).join('\n\n');
+
+    const alert = await this.alertController.create({
+      header: 'Historycicle',
+      message: historyText || 'No history available',
+      buttons: ['OK']
+    });
+
+    await alert.present();
+}
+
+  private generateHistoryTable(history: any[]): string {
+    if (history.length === 0) {
+      return 'No history available';
+    }
+
+    let table = `
+      <table style="width: 100%; border-collapse: collapse;">
+        <tr>
+          <th style="border: 1px solid #ccc; padding: 8px;">Consumable</th>
+          <th style="border: 1px solid #ccc; padding: 8px;">Date</th>
+          <th style="border: 1px solid #ccc; padding: 8px;">Employee Number</th>
+          <th style="border: 1px solid #ccc; padding: 8px;">Rack</th>
+        </tr>
+    `;
+
+    history.forEach(item => {
+      table += `
+        <tr>
+          <td style="border: 1px solid #ccc; padding: 8px;">${item.consumable}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${item.date}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${item.employeeNumber}</td>
+          <td style="border: 1px solid #ccc; padding: 8px;">${item.rack}</td>
+        </tr>
+      `;
+    });
+
+    table += `</table>`;
+    return table;
+  }
 }

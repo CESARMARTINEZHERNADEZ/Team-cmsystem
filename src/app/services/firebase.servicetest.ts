@@ -4,6 +4,7 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { QuerySnapshot } from '@angular/fire/compat/firestore';
 
 
 
@@ -22,6 +23,10 @@ export class FirebaseService {
     return this.firestore.collection(path).doc(id).set(data);
   }
 
+  addToCollection(collectionPath: string, data: any): Promise<void> {
+    const id = this.firestore.createId(); // Genera un ID único para el documento
+    return this.firestore.collection(collectionPath).doc(id).set(data); // Añade el documento con el ID generado
+  }
 
   generateDocId(collectionPath: string): string {
     return this.firestore.collection(collectionPath).doc().ref.id;
@@ -34,6 +39,7 @@ export class FirebaseService {
   setCollectionlife(collectionPath: string, data: any, docId: string) {
     return this.firestore.collection(collectionPath).doc(docId).set(data);
   }
+ 
 
   setcollecion(path: string, data: any) { 
     return addDoc(collection(getFirestore(), path), data);
@@ -114,6 +120,24 @@ export class FirebaseService {
   }
 
  
+  async getHistorycicle(rack: string): Promise<any[]> {
+    try {
+      const historySnapshot = await this.firestore.collection('historycicle', ref => ref.where('rack', '==', rack)).get().toPromise();
+
+      if (historySnapshot && !historySnapshot.empty) {
+        return historySnapshot.docs.map(doc => doc.data());
+      } else {
+        return []; // Devuelve un array vacío si no hay documentos
+      }
+    } catch (error) {
+      console.error("Error fetching historycicle: ", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  }
+
+  // Otros métodos de tu servicio Firebase...
 }
+ 
+
 
 
