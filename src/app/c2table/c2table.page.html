@@ -1,10 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem</ion-title>
+    <ion-title>Spare Control CMSystem/ Cage B / Inventory</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">
-        log out
-      </ion-button>
+      <ion-button class="buttcounter" routerLink="/c2counter">Movements</ion-button>
+      <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -19,9 +18,7 @@
     </ion-select>
 
     <div class="butt">
-      <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
-      <ion-button class="buttcounter" routerLink="/c2counter">Counter</ion-button>
-      <ion-button (click)="addConsumable()" color="danger">Add</ion-button>
+      <ion-button (click)="addConsumable()" color="danger">Add Consumable</ion-button>
     </div>
   </div>
 
