@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.servicetest';
 import * as moment from 'moment';
+import { Router } from '@angular/router';
+import { UserService } from '../services/User.Service';
 
 @Component({
   selector: 'app-life',
@@ -11,16 +13,38 @@ import * as moment from 'moment';
 export class LifePage implements OnInit {
   racks = ['Rack 1 S1', 'Rack 2 S1', 'Rack 1 S2', 'Rack 2 S2'];
   consumables: any[] = [];
+  visibleRacks: { [key: string]: boolean } = {};
 
   constructor(
+    private userService: UserService,
+    private router: Router,
     private firebaseService: FirebaseService,
     private alertController: AlertController
   ) {}
 
   ngOnInit() {
+    const user = this.userService.getUser();
+    if (!user) {
+      this.router.navigate(['/dashboard']);
+    }
     this.loadConsumables();
   }
 
+  getRowStart(index: number): number {
+    return Math.ceil((index + 1) / 4);
+  }
+  logout() {
+    this.userService.clearUser();
+    this.router.navigate(['/dashboard']);
+  }
+
+  toggleRackVisibility(rack: string) {
+    this.visibleRacks[rack] = !this.visibleRacks[rack];
+  }
+
+  isRackVisible(rack: string): boolean {
+    return !!this.visibleRacks[rack];
+  }
   loadConsumables() {
     this.consumables = [];
     this.racks.forEach((rack) => {
@@ -111,12 +135,33 @@ export class LifePage implements OnInit {
     });
     await alert.present();
   }
-  getRackClass(rack: string) {
+
+  getRackClass(rack: string): string {
     const hasSoon = this.consumables.some(c => c.rack === rack && c.status === 'Soon');
     const hasReplace = this.consumables.some(c => c.rack === rack && c.status === 'Replace');
-    return {
-      'soon': hasSoon,
-      'replace': hasReplace,
-    };
+    
+    if (hasReplace) {
+      return 'replace';
+    
+    
+    } else if (hasSoon) {
+      return 'soon';
+    }
+    return '';
   }
+
+  getButtonClass(rack: string): string {
+    const hasSoon = this.consumables.some(c => c.rack === rack && c.status === 'Soon');
+    const hasReplace = this.consumables.some(c => c.rack === rack && c.status === 'Replace');
+
+    if (hasReplace) {
+      return 'red-button';
+    } else if (hasSoon) {
+      return 'yellow-button';
+    } else {
+      return 'default-button';
+    }
+  }
+
+
 }

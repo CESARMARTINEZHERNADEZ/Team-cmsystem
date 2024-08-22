@@ -1,29 +1,37 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem / Life</ion-title>
+    <ion-title>Spare Control CMSystem /Life</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/dashboard">Dashboard</ion-button>
-      <ion-button routerLink="/login">login</ion-button>
+      <ion-button routerLink="/cycle">Life Cicle</ion-button>
+      <ion-button routerLink="/menu">menu</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <div class="rack-grid">
-    <div *ngFor="let rack of racks">
-      <ion-card [ngClass]="getRackClass(rack)">
-        <ion-card-title><b>{{ rack }}</b></ion-card-title>
+  <div class="rack-button-grid">
+    <div *ngFor="let rack of racks; let i = index" class="rack-container">
+      <ion-button 
+        (click)="toggleRackVisibility(rack)"
+        [ngClass]=" getButtonClass(rack)"
+        expand="block"
+      >
+        {{ rack }}
+      </ion-button>
+
+      <div *ngIf="isRackVisible(rack)" class="consumables-container" [ngClass]="getRackClass(rack)">
         <div *ngFor="let consumable of consumables" [hidden]="consumable.rack !== rack">
-          <ion-item [ngClass]="consumable.cssClass">
+          <ion-item [ngClass]="consumable.cssClass" class="consumable-item">
             <ion-label class="consumable-info">
-            <h2><b>{{ consumable.name }}</b></h2>
-            <p>Status: {{ consumable.lifecyclePercentage.toFixed(2) }}% - {{ consumable.status }}</p>
-          </ion-label>
+              <h2><b>{{ consumable.name }}</b></h2>
+              <p>{{ consumable.lifecyclePercentage.toFixed(2) }}% - {{ consumable.status }}</p>
+            </ion-label>
             <ion-button (click)="resetInitializationDate(consumable)">Reset</ion-button>
           </ion-item>
         </div>
-      </ion-card>
+      </div>
     </div>
   </div>
 </ion-content>
+
 

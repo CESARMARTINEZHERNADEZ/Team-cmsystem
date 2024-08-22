@@ -1,92 +1,77 @@
-.header-row {
-    background-color: #f8f9fa;
-    font-weight: bold;
-  }
-  
-  .data-row {
-    background-color: #ffffff;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .progress-bar-container {
-    width: 100%;
-    background-color: #f0f0f0;
-    border-radius: 5px;
-    overflow: hidden;
-  }
-  
-  .progress-bar {
-    height: 20px;
-    text-align: center;
-    line-height: 20px;
-    color: #b0b0b0;
-    border-radius: 5px;
-  }
-  
-  .pagination-buttons {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-  }
-  .butt {
-    display: flex; 
-    justify-content: flex-end;
-}
-.iconup {
-  font-size: 24px; 
-  color: blue;
-}
-
-.icondel {
-  font-size: 24px; 
-  color: rgb(133, 0, 0);
-}
-.scan-input {
-  width: 100%;
-  border: 2px solid gray;
-  box-sizing: border-box;
-  display: flex;
-}
-  
-
-.button-container {
-  display: flex;
-  justify-content: flex-end;
-}
-.soon {
-  background-color: rgb(255, 255, 0) !important;
-  color:rgb(204, 204, 0);
-  
-}
-
-.replace {
-  background-color: red !important;
-  color: red;
-  
-}
-
-
-
-.rack-grid {
+.rack-button-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
   padding: 16px;
 }
 
+.rack-container {
+  position: relative;
+}
+
+.consumables-container {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 8px;
+}
+
+
+.red-button {
+  --background: red !important;
+  --color: white !important;
+}
+
+.yellow-button {
+  --background: rgb(234, 255, 0) !important;
+  --color: rgb(0, 0, 0) !important;
+}
+
+.default-button {
+  --background: var(--ion-color-primary) !important;
+  --color: white !important;
+}
+
+ion-button.soon {
+  background-color: yellow !important;
+  color: darkorange;
+ 
+}
+
+ion-button.replace {
+  background-color: red !important;
+  color: rgb(255, 0, 0);
+}
+
+.consumables-container.soon {
+  background-color: yellow;
+}
+
+.consumables-container.replace {
+  background-color: red;
+}
+
+.consumable-item {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 8px;
+  display: block;
+  width: 100%;
+}
+
 .consumable-info h2 {
-  font-size: 16px;
+  font-size: 14px;
   margin: 0;
-  
 }
 
 .consumable-info p {
   margin: 0;
-  font-size: 14px;
-}
-
-ion-card {
-  margin-bottom: 16px;
+  font-size: 12px;
 }
 
 ion-item {
