@@ -12,13 +12,19 @@
   
     /* Opcional: añadir un borde inferior */
     border-bottom: 2px solid #ffffff;
+  }
 
-    .background {
-    padding: 20px;
-      padding: 20px;
-      height: 100%;
-      background: url('../assets/fondo2.jpg') no-repeat center center fixed;
-      background-size: cover;
-      width: 100%;
-      }
+  .fondo{
+    --background: none; /* Desactiva el fondo por defecto de Ionic */
+    background-image: url('../assets/fondo.jpg');
+    background-size: cover; /* Cubre toda el área de contenido */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
+  }
+  .fondo2{
+    --background: none; /* Desactiva el fondo por defecto de Ionic */
+    background-image: url('../assets/fondo2.jpg');
+    background-size: cover; /* Cubre toda el área de contenido */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que la imagen se repita */
   }

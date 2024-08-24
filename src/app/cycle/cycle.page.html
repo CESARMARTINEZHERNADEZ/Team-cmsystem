@@ -1,15 +1,19 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem / Life Cicle</ion-title>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Life Cycle</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button routerLink="/life">life</ion-button>
-      <ion-button routerLink="/menu">Menu</ion-button>
+      <ion-button (click)="logout()">
+        log out
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 
-<ion-content>
+<ion-content class="fondo2">
   <ion-segment [(ngModel)]="selectedRack" (ionChange)="selectRack($event.detail.value?.toString() || 'Rack1')"> 
     <ion-segment-button value="Rack 1 S1">
       <ion-label>Rack 1 S1</ion-label>

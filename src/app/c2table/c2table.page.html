@@ -1,14 +1,18 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem/ Cage B / Inventory</ion-title>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Cage B</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button class="buttcounter" routerLink="/c2counter">Movements</ion-button>
-      <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
+      <ion-button (click)="logout()">
+        log out
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="fondo2">
   <div class="select">
     <ion-select placeholder="Select the order of the table" [(ngModel)]="selectedOption" (ionChange)="onOptionChange($event)">
       <ion-select-option value="option1">A-Z Consumable Name</ion-select-option>
@@ -21,7 +25,7 @@
       <ion-button (click)="addConsumable()" color="danger">Add Consumable</ion-button>
     </div>
   </div>
-
+<ion-card>
   <table>
     <tr>
       <th>Consumable</th>
@@ -56,7 +60,7 @@
       </td>
     </tr>
   </table>
-
+</ion-card>
   <div class="color-legend" style="text-align: center;">
     <div><span class="color-box blue"></span> Blue: Consumable exceeds or equals the maximum level</div>
     <div><span class="color-box red"></span> Red: the consumable is less than or equal to the minimum level</div>
@@ -178,6 +182,7 @@
     <ion-select-option value="actionAsc">Action</ion-select-option>
     <ion-select-option value="userAsc">User</ion-select-option>
   </ion-select>
+  <ion-card>
   <table *ngIf="showTable">
     <tr>
       <th>Consumable</th>
@@ -194,6 +199,7 @@
       <td>{{ historyItem.user.clockNumber }} - {{ historyItem.user.fullName }}</td>
     </tr>
   </table>
+</ion-card>
   <div class="button-container" *ngIf="showTable">
     <ion-button (click)="previousPage()" [disabled]="currentPage === 1">Previous</ion-button>
     <ion-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</ion-button>

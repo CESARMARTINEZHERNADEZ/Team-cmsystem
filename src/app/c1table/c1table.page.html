@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar class="custom-toolbar">
-    <ion-title>Movements</ion-title>
+    <ion-title>Cage A</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
@@ -27,7 +27,7 @@
       <ion-button (click)="addConsumable()" color="danger">Add Consumable</ion-button>
     </div>
   </div>
-
+<ion-card>
   <table>
     <tr>
       <th>Consumable</th>
@@ -62,7 +62,7 @@
       </td>
     </tr>
   </table>
-
+</ion-card>
   <div class="color-legend" style="text-align: center;">
     <div><span class="color-box blue"></span> Blue: Consumable exceeds or equals the maximum level</div>
     <div><span class="color-box red"></span> Red: the consumable is less than or equal to the minimum level</div>
@@ -181,6 +181,7 @@
     <ion-select-option value="actionAsc">Action</ion-select-option>
     <ion-select-option value="userAsc">User</ion-select-option>
   </ion-select>
+  <ion-card>
   <table *ngIf="showTable">
     <tr>
       <th>Consumable</th>
@@ -197,6 +198,8 @@
       <td>{{ historyItem.user.clockNumber }} - {{ historyItem.user.fullName }}</td>
     </tr>
   </table>
+</ion-card>
+
   <div class="button-container" *ngIf="showTable">
     <ion-button (click)="previousPage()" [disabled]="currentPage === 1">Previous</ion-button>
     <ion-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</ion-button>

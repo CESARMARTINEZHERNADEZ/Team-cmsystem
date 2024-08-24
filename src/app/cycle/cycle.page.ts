@@ -7,7 +7,7 @@ import { UserService } from '../services/User.Service';
 @Component({
   selector: 'app-cycle',
   templateUrl: './cycle.page.html',
-  styleUrls: ['./cycle.page.scss'],
+  styleUrls: ['./cycle.page.scss','../app.component.scss'],
 })
 export class CyclePage implements OnInit {
 

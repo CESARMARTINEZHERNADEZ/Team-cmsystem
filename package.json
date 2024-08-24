@@ -28,7 +28,7 @@
     "@capacitor/keyboard": "6.0.0",
     "@capacitor/status-bar": "6.0.0",
     "@ionic/angular": "^8.0.0",
-    "chart.js": "^4.4.3",
+    "chart.js": "^4.4.4",
     "firebase": "^10.13.0",
     "ionicons": "^7.0.0",
     "moment": "^2.30.1",

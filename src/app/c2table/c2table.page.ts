@@ -7,7 +7,7 @@ import { UserService } from '../services/User.Service';
 @Component({
   selector: 'app-c2table',
   templateUrl: './c2table.page.html',
-  styleUrls: ['./c2table.page.scss'],
+  styleUrls: ['./c2table.page.scss','../app.component.scss'],
 })
 export class C2tablePage implements OnInit {
   public consumables: any[] = [];
