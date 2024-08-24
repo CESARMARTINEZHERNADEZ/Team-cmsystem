@@ -1,0 +1,24 @@
+.custom-toolbar {
+    color: #ffffff; /* Cambia el color del texto */
+    font-size: 20px;
+    --ion-color-primary: #fca311; /* Personaliza el color primario */
+    --ion-toolbar-background: #34495e; /* Cambia el fondo de la toolbar */
+    --ion-toolbar-border-color: #0000; /* Cambia el color del borde */ 
+  
+    ion-title {
+      font-weight: bold; /* Haz el título en negrita */
+      text-align: center; /* Centra el texto */
+    }
+  
+    /* Opcional: añadir un borde inferior */
+    border-bottom: 2px solid #ffffff;
+
+    .background {
+    padding: 20px;
+      padding: 20px;
+      height: 100%;
+      background: url('../assets/fondo2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      width: 100%;
+      }
+  }

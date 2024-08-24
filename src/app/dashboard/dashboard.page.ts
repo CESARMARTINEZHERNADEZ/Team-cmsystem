@@ -6,7 +6,7 @@ import { UserService } from '../services/User.Service';
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
-  styleUrls: ['./dashboard.page.scss'],
+  styleUrls: ['./dashboard.page.scss', '../app.component.scss'],
 })
 export class DashboardPage implements OnInit {
   collections = [

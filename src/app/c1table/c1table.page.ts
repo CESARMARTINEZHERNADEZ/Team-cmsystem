@@ -7,7 +7,7 @@ import { UserService } from '../services/User.Service';
 @Component({
   selector: 'app-c1table',
   templateUrl: './c1table.page.html',
-  styleUrls: ['./c1table.page.scss'],
+  styleUrls: ['./c1table.page.scss','../app.component.scss'],
 })
 export class C1tablePage implements OnInit {
   public consumables: any[] = [];

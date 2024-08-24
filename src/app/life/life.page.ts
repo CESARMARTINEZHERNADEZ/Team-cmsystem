@@ -8,7 +8,7 @@ import { UserService } from '../services/User.Service';
 @Component({
   selector: 'app-life',
   templateUrl: './life.page.html',
-  styleUrls: ['./life.page.scss'],
+  styleUrls: ['./life.page.scss', '../app.component.scss'],
 })
 export class LifePage implements OnInit {
   racks = ['Rack 1 S1', 'Rack 2 S1', 'Rack 1 S2', 'Rack 2 S2'];

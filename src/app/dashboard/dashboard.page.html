@@ -1,9 +1,8 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem / Dashboard</ion-title>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title></ion-title>
     <ion-buttons slot="end">
-      
-      <ion-button routerLink="/login">login</ion-button>
+      <ion-button routerLink="/login">Log In</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
@@ -16,13 +15,14 @@
   </ion-header>
 
   <!-- Agrega un ion-segment para cambiar entre las colecciones -->
+  <div class="dashboard-container">
+
   <ion-segment [(ngModel)]="selectedCollection">
     <ion-segment-button *ngFor="let collection of collections" [value]="collection.name">
       {{ collection.displayName }}
     </ion-segment-button>
   </ion-segment>
 
-  <div class="dashboard-container">
     <div *ngFor="let collection of collections">
 
       <div *ngIf="selectedCollection === collection.name">

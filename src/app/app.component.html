@@ -1,3 +1,46 @@
+
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
+  <ion-menu side="start" menuId="first" contentId="main-content">
+    <ion-header>
+      <ion-toolbar class="custom-toolbar">
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <ion-item routerLink="/life" routerDirection="root">
+          <ion-icon name="home" slot="start"></ion-icon>
+          <ion-label>Home</ion-label>
+        </ion-item>
+      </ion-list>
+      <ion-list>
+        <ion-item routerLink="/c1counter" routerDirection="root">
+          <ion-icon name="git-compare-outline" slot="start"></ion-icon>
+          <ion-label>Movements</ion-label>
+        </ion-item>
+      </ion-list>
+        <ion-list>
+        <ion-item lines="none" button (click)="toggleDropdown()">
+          <ion-icon name="information-circle" slot="start"></ion-icon>
+          <ion-label>Inventory</ion-label>
+          <ion-icon slot="end" [name]="dropdownOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
+        </ion-item>
+          <ion-list *ngIf="dropdownOpen" class="dropdown-content">
+            <ion-item routerLink="c1table" routerDirection="root">Cage A</ion-item>
+            <ion-item routerLink="c2table" routerDirection="root">Cage B</ion-item>
+          </ion-list>
+      </ion-list>
+      <ion-list>
+        <ion-item routerLink="/cycle" routerDirection="root">
+          <ion-icon name="battery-half-outline" slot="start"></ion-icon>
+          <ion-label>Life Cycle</ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
+  <div class="ion-page" id="main-content">
+    <ion-router-outlet></ion-router-outlet>
+  </div>
 </ion-app>

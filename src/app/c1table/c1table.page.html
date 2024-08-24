@@ -1,14 +1,20 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem / Cage A / Inventory</ion-title>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Movements</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button class="buttcounter" routerLink="/c1counter">Movements</ion-button>
-      <ion-button class="buttcounter" routerLink="/menu">Menu</ion-button>
+      <ion-button (click)="logout()">
+        log out
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
+  <div class="background">
+
   <div class="select">
     <ion-select placeholder="Select the order of the table" [(ngModel)]="selectedOption" (ionChange)="onOptionChange($event)">
       <ion-select-option value="option1">A-Z Consumable Name</ion-select-option>
@@ -194,5 +200,6 @@
   <div class="button-container" *ngIf="showTable">
     <ion-button (click)="previousPage()" [disabled]="currentPage === 1">Previous</ion-button>
     <ion-button (click)="nextPage()" [disabled]="currentPage === totalPages">Next</ion-button>
+  </div>
   </div>
 </ion-content>

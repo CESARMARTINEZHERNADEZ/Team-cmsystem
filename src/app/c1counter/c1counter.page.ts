@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-c1counter',
   templateUrl: './c1counter.page.html',
-  styleUrls: ['./c1counter.page.scss'],
+  styleUrls: ['./c1counter.page.scss', '../app.component.scss'],
 })
 export class C1counterPage implements OnInit {
   public consumables: any[] = [];

@@ -1,7 +1,11 @@
 <ion-header [translucent]="false" collapse="none">
-  <ion-toolbar color="primary">
+  <ion-toolbar class="custom-toolbar">
     <ion-title>Spare Control CMSystem / Main Menu</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-buttons slot="end">
+      <ion-button routerLink="/life">Life Cycle</ion-button>
       <ion-button (click)="logout()">
         log out
       </ion-button>
@@ -11,7 +15,7 @@
 
 <ion-content [fullscreen]="true" scrollEvents="true" collapse="none" >
   
-
+<div class="dashboard-container">
   <div class="centered-buttons">
     <ion-grid>
       <ion-row>
@@ -32,14 +36,16 @@
           </ion-list>
         </ion-col>
       </ion-row>
-      <ion-row>
-        <ion-col sizeMd="6" sizeSm="12" class="centered-red-button">
+      <!--<ion-row>
+       <ion-col sizeMd="6" sizeSm="12" class="centered-red-button">
           <ion-button class="big-button" routerLink="/home">GRAPHICS</ion-button>
         </ion-col>
         <ion-col sizeMd="6" sizeSm="12" class="centered-red-button">
           <ion-button class="big-button" routerLink="/cycle">life cycle</ion-button>
         </ion-col>
-      </ion-row>
+    
+    </ion-row>-->
     </ion-grid>
   </div>
+</div>
 </ion-content>

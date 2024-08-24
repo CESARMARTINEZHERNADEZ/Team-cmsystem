@@ -2,20 +2,27 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FirebaseService } from '../services/firebase.servicetest';
 import { UserService } from '../services/User.Service';
+import { MenuController } from '@ionic/angular';
 
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.page.html',
-  styleUrls: ['./menu.page.scss'],
+  styleUrls: ['./menu.page.scss','../app.component.scss'],
 })
 export class MenuPage implements OnInit {
   buttonStyles: { [key: string]: string } = {};
   consumablesByCollection: { [key: string]: string[] } = {}; // To store consumables for each collection
 
+openFirst() {
+  this.menu.enable(true, 'first');
+  this.menu.open('first');
+}
+
   constructor(
     private userService: UserService,
     private router: Router,
-    private firebaseService: FirebaseService
+    private firebaseService: FirebaseService,
+    private menu: MenuController
   ) { }
 
   ngOnInit() {

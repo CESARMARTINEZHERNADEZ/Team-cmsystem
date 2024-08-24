@@ -1,3 +1,11 @@
+.background {
+  padding: 20px;
+padding: 20px;
+height: 100%;
+background: url('../../assets/fondo2.jpg') no-repeat center center fixed;
+background-size: cover;
+width: 100%;
+}
 .rack-button-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

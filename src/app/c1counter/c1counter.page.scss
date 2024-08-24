@@ -1,3 +1,21 @@
+.background {
+    padding: 20px;
+      padding: 20px;
+      height: 100%;
+      background: url('../../assets/fondo2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      width: 100%;
+      }  
+
+    ion-card {
+        width: 90%;
+        max-width: 400px;
+        background-color: rgba(255, 255, 255, 0.9); /* Blanco con 50% de opacidad */
+        border: 1px solid rgba(0, 0, 0, 1); /* Borde con 10% de opacidad */
+      }
+  .whitefill{
+    background: #d0d3d4;
+  }
 .centered-container {
     display: flex;
     justify-content: center;
@@ -12,7 +30,6 @@
 }
 
 .scan-input {
-    width: 100%;
     border: 2px solid gray;
     box-sizing: border-box;
     display: flex;
@@ -41,6 +58,19 @@
     box-sizing: border-box;
     margin: 20px;
 }
+.scan-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid gray;
+    padding: 20px;
+    box-sizing: border-box;
+    margin: 20px;
+}
+
+
+
 
 .consumable-info {
     text-align: center;

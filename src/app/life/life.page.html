@@ -1,14 +1,19 @@
 <ion-header [translucent]="true">
-  <ion-toolbar color="primary">
-    <ion-title>Spare Control CMSystem /Life</ion-title>
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Start Page</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button routerLink="/cycle">Life Cicle</ion-button>
-      <ion-button routerLink="/menu">menu</ion-button>
+      <ion-button (click)="logout()">
+        log out
+      </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <div class="background">
   <div class="rack-button-grid">
     <div *ngFor="let rack of racks; let i = index" class="rack-container">
       <ion-button 
@@ -31,6 +36,7 @@
         </div>
       </div>
     </div>
+  </div>
   </div>
 </ion-content>
 

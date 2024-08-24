@@ -1,4 +1,15 @@
 /* Estilo base común para todos los dispositivos */
+ion-container{
+    padding: 20px;
+      padding: 20px;
+      height: 100%;
+      background: url('../../assets/fondo2.jpg') no-repeat center center fixed;
+      background-size: cover;
+      width: 100%;
+    background-position: center; /* Centra la imagen */
+    background-attachment: fixed; /* Fija la imagen en su posición */
+    background-repeat: no-repeat; /* Evita la repetición de la imagen */
+      }  
 .responsive-container {
     display: flex;
     justify-content: space-between;

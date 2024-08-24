@@ -7,7 +7,7 @@ import { UserService } from '../services/User.Service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
-  styleUrls: ['./login.page.scss'],
+  styleUrls: ['./login.page.scss','../app.component.scss'],
 })
 export class LoginPage implements OnInit {
   clockNumber: string = '';
@@ -26,7 +26,7 @@ export class LoginPage implements OnInit {
     this.firebaseService.getCollectionByClockNumberAndPassword('usuarios', this.clockNumber, this.password).subscribe(async (users: any[]) => {
       if (users.length > 0) {
         this.userService.setUser(users[0]); 
-        await this.router.navigate(['/menu']); 
+        await this.router.navigate(['/life']); 
         this.clearLoginForm(); 
       } else {
         const alert = await this.alertController.create({
