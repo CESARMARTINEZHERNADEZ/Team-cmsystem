@@ -1,12 +1,12 @@
 <ion-header [translucent]="true">
   <ion-toolbar class="custom-toolbar">
-    <ion-title>Cage A</ion-title>
+    <ion-title>{{ location }}</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
       <ion-button (click)="logout()">
-        log out
+        Log out
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -27,49 +27,52 @@
       <ion-button (click)="addConsumable()" color="danger">Add Consumable</ion-button>
     </div>
   </div>
-<ion-card>
-  <table>
-    <tr>
-      <th>Consumable</th>
-      <th>Description</th>
-      <th>Part Number</th>
-      <th>Minimum Level</th>
-      <th>Maximum Level</th>
-      <th>Available</th>
-      <th>Lend</th>
-      <th>Damage</th>
-      <th>End of life</th>
-      <th>Total</th>
-      <th></th>
-    </tr>
-    <tr *ngFor="let consumable of consumables" [ngClass]="{
-      'blue-row': consumable.SubTotal >= consumable.MaximumLevel, 
-      'red-row': consumable.SubTotal <= consumable.MinimumLevel
-    }">
+  <ion-card>
+    <table>
+      <tr>
+        <th>Location</th>
+        <th>Consumable</th>
+        <th>Description</th>
+        <th> Comment</th>  
+        <th>Part Number</th>
+        <th>Minimum Level</th>
+        <th>Maximum Level</th>
+        <th>Available</th>
+        <th>Lend</th>
+        <th>Damage</th>
+        <th>End of life</th>
+        <th>Total</th>
+        <th></th>
+      </tr>
+      <tr *ngFor="let consumable of consumables" [ngClass]="{
+        'blue-row': consumable.SubTotal >= consumable.MaximumLevel, 
+        'red-row': consumable.SubTotal <= consumable.MinimumLevel
+      }">
+      <td>{{ consumable.location }}</td>
       <td>{{ consumable.Consumable }}</td>
       <td>{{ consumable.Description }}</td>
+      <td>{{ consumable.Comment }}</td>
       <td>{{ consumable.PartNumber }}</td>
       <td>{{ consumable.MinimumLevel }}</td>
       <td>{{ consumable.MaximumLevel }}</td>
       <td>{{ consumable.SubTotal }}</td>
       <td>{{ consumable.lend }}</td>
       <td>{{ consumable.damage }}</td>
-      <td>{{ consumable.life}}</td>
+      <td>{{ consumable.life }}</td>
       <td>{{ consumable.total }}</td>
       <td>
         <ion-icon name="create-outline" class="iconup" (click)="updateConsumable(consumable)"></ion-icon>
         <ion-icon name="trash-outline" class="icondel" (click)="deleteConsumable(consumable)"></ion-icon>
       </td>
-    </tr>
-  </table>
-</ion-card>
+      </tr>
+    </table>
+  </ion-card>
   <div class="color-legend" style="text-align: center;">
-    <div><span class="color-box blue"></span> Blue: Consumable exceeds or equals the maximum level</div>
+    <div><span class="color-box blue"></span> Green: Consumable exceeds or equals the maximum level</div>
     <div><span class="color-box red"></span> Red: the consumable is less than or equal to the minimum level</div>
   </div>
-
-<!-- Lend -->
-<ion-button (click)="toggleLend()" expand="full">Lend</ion-button>
+<!-- Lend 
+<ion-button (click)="toggleLend()" expand="full" color="medium">Lend</ion-button>
 
 <ion-card *ngIf="showLend">
   <ion-card-header>
@@ -101,9 +104,9 @@
       </table>
     </div>
   </ion-card-content>
-</ion-card>
-<!-- Life -->
-<ion-button (click)="toggleLife()" expand="full">Life</ion-button>
+</ion-card> -->
+<!-- Life 
+<ion-button (click)="toggleLife()" expand="full" color="medium">Life</ion-button>
 
 <ion-card *ngIf="showLife">
   <ion-card-header>
@@ -118,7 +121,7 @@
             <th>Quantity</th>
             <th>Reason</th>
             <th>Date</th>
-            <!-- <th>Actions</th>-->
+          ///<th>Actions</th////
           </tr>
         </thead>
         <tbody>
@@ -127,19 +130,19 @@
             <td>{{ item.quantity }}</td>
             <td>{{ item.reason }}</td>
             <td>{{ item.date }}</td>
-            <!--<td>
+            ///<td>
               <ion-button  color="danger">Delete</ion-button>
-            </td>-->
+            </td>///
           </tr>
         </tbody>
       </table>
     </div>
   </ion-card-content>
 </ion-card>
+-->
 
-
-<!-- damage -->
-<ion-button (click)="toggledamage()" expand="full">Damage</ion-button>
+<!-- damage
+<ion-button (click)="toggledamage()" expand="full" color="medium">Damage</ion-button>
 
 <ion-card *ngIf="showDamage">
   <ion-card-header>
@@ -154,7 +157,7 @@
             <th>Quantity</th>
             <th>Reason</th>
             <th>Date</th>
-            <!-- <th>Actions</th>-->
+            ///<th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -163,18 +166,18 @@
             <td>{{ item.quantity }}</td>
             <td>{{ item.reason }}</td>
             <td>{{ item.date }}</td>
-            <!--<td>
+           /// <td>
               <ion-button  color="danger">Delete</ion-button>
-            </td>-->
+            </td>///
           </tr>
         </tbody>
       </table>
     </div>
   </ion-card-content>
-</ion-card>
+</ion-card> -->
 
   <!-- Historial -->
-  <ion-button (click)="toggleTable()" expand="full">History</ion-button>
+  <ion-button (click)="toggleTable()" expand="full" color="medium">History</ion-button>
   <ion-select placeholder="Select the order of the history" [(ngModel)]="selectedHistoryOption" (ionChange)="onHistoryOptionChange($event)" *ngIf="showTable">
     <ion-select-option value="nameAsc">A-Z Consumable Name</ion-select-option>
     <ion-select-option value="nameDesc">Z-A Consumable Name</ion-select-option>

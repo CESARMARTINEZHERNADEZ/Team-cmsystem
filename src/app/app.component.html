@@ -1,4 +1,3 @@
-
 <ion-app>
   <ion-menu side="start" menuId="first" contentId="main-content">
     <ion-header>
@@ -17,34 +16,48 @@
           <ion-label>Home</ion-label>
         </ion-item>
       </ion-list>
-      <ion-list>
-        <ion-item routerLink="/c1counter" routerDirection="root">
+     <!--   <ion-list>
+       <ion-item routerLink="/c1counter" routerDirection="root">
           <ion-icon name="git-compare-outline" slot="start"></ion-icon>
           <ion-label>Movements</ion-label>
         </ion-item>
-      </ion-list>
-        <ion-list>
+      </ion-list>-->
+      <ion-list> 
         <ion-item lines="none" button (click)="toggleDropdown()">
           <ion-icon name="information-circle" slot="start"></ion-icon>
           <ion-label>Inventory</ion-label>
           <ion-icon slot="end" [name]="dropdownOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
         </ion-item>
-          <ion-list *ngIf="dropdownOpen" class="dropdown-content">
-            <ion-item routerLink="c1table" routerDirection="root">Cage A</ion-item>
-            <ion-item routerLink="c2table" routerDirection="root">Cage B</ion-item>
-          </ion-list>
+        <ion-list *ngIf="dropdownOpen" class="dropdown-content">
+
+          <ion-item *ngFor="let location of locations" (click)="selectOption(location.location)">
+            {{ location.location }}
+          </ion-item>
+
+        </ion-list>
       </ion-list>
       <ion-list>
-        <ion-item routerLink="/cycle" routerDirection="root">
-          <ion-icon name="battery-half-outline" slot="start"></ion-icon>
-          <ion-label>Life Cycle</ion-label>
-        </ion-item>
-      </ion-list>
+      <ion-item *ngIf="userService.isAdmin()" routerLink="/user" routerDirection="root">
+        <ion-icon name="person-circle-outline" slot="start"></ion-icon>
+        <ion-label>User</ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-list>
+      <ion-item *ngIf="userService.isAdmin()" routerLink="/location" routerDirection="root">
+        <ion-icon name="location-outline" slot="start"></ion-icon>
+        <ion-label>Locations</ion-label>
+      </ion-item>
+    </ion-list>
     </ion-content>
   </ion-menu>
 
   <div class="ion-page" id="main-content">
     <ion-router-outlet></ion-router-outlet>
   </div>
-    
 </ion-app>
+
+
+
+
+
+

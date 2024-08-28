@@ -15,19 +15,12 @@ const routes: Routes = [
     loadChildren: () => import('./menu/menu.module').then(m => m.MenuPageModule)
     
   },
-  {
-    path: 'c1counter',
-    loadChildren: () => import('./c1counter/c1counter.module').then( m => m.C1counterPageModule)
-  },
+ 
   {
     path: 'c1table',
     loadChildren: () => import('./c1table/c1table.module').then( m => m.C1tablePageModule)
   },
   
-  {
-    path: 'signin',
-    loadChildren: () => import('./signin/signin.module').then( m => m.SigninPageModule)
-  }, 
   {
     path: 'home',
     loadChildren: () => import('./home/home.module').then( m => m.HomePageModule)
@@ -52,6 +45,16 @@ const routes: Routes = [
     path: 'cycle',
     loadChildren: () => import('./cycle/cycle.module').then( m => m.CyclePageModule)
   },
+  {
+    path: 'user',
+    loadChildren: () => import('./user/user.module').then( m => m.UserPageModule)
+  },
+  {
+    path: 'location',
+    loadChildren: () => import('./location/location.module').then( m => m.LocationPageModule)
+  },
+
+
 
 
   

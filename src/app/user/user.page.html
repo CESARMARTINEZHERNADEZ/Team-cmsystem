@@ -1,0 +1,53 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>User Management</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Log out</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="background">
+  <ion-button expand="end" class="add-user-button" (click)="addUser()">
+    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+    Add New User</ion-button>
+
+  <div class="table-container">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Clock Number</th>
+          <th>Email</th>
+          <th>Full Name</th>
+          <th>Role</th>
+          <th>Password</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{ user.clockNumber }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.fullName }}</td>
+          <td>{{ user.rol }}</td>
+          <td>{{ user.password }}</td>
+          <td>
+            <ion-button fill="outline" color="tertiary" (click)="editUser(user)">
+              <ion-icon slot="start" name="create-outline"></ion-icon>
+              Update
+            </ion-button>
+            <ion-button color="danger" (click)="deleteUser(user.id)">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Delete
+            </ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</ion-content>

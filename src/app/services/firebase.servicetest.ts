@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AngularFirestore} from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { QuerySnapshot } from '@angular/fire/compat/firestore';
 
 
 
@@ -16,7 +14,8 @@ export class FirebaseService {
 
   constructor(
     public firestore: AngularFirestore,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    
   ) { }
 
   setCollectionWithId(path: string, id: string, data: any) {
@@ -40,7 +39,6 @@ export class FirebaseService {
     return this.firestore.collection(collectionPath).doc(docId).set(data);
   }
  
-
   setcollecion(path: string, data: any) { 
     return addDoc(collection(getFirestore(), path), data);
   }
@@ -94,7 +92,22 @@ export class FirebaseService {
   setHistory(path: string, data: any) {
     return this.firestore.collection(path).add(data);
   }
-
+  
+  async getLocations(): Promise<any[]> {
+    try {
+      const snapshot = await this.firestore.collection('locations').get().toPromise();
+  
+      // Verificamos si snapshot no es undefined
+      if (snapshot && !snapshot.empty) {
+        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      } else {
+        return []; // Devuelve un array vacío si no hay documentos o si snapshot es undefined
+      }
+    } catch (error) {
+      console.error("Error fetching locations: ", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  }
 
   getCollectionData(collection: string) {
     return this.firestore.collection(collection).valueChanges();

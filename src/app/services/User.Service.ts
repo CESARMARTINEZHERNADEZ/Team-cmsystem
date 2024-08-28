@@ -24,4 +24,16 @@ export class UserService {
     this.user = null;
     localStorage.removeItem(this.userKey);
   }
+
+  isAdmin(): boolean {
+    const user = this.getUser();
+    return user && user.rol === 'admin'; // Verifica si el usuario es admin
+  }
 }
+
+
+
+
+
+
+

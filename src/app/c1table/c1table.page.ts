@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.servicetest';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../services/User.Service'; 
 
 @Component({
@@ -28,12 +28,14 @@ export class C1tablePage implements OnInit {
   public c1lend: any[] = [];
   public c1damage: any[] = [];
   public c1life: any[] = [];
+  location: string = '';
 
   constructor(
     private alertController: AlertController,
     private firebaseService: FirebaseService,
     private userService: UserService, 
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {
     this.consumables = [];
     this.selectedOption = 'option1';
@@ -61,18 +63,43 @@ export class C1tablePage implements OnInit {
     if (!user) {
       this.router.navigate(['/dashboard']);
     } else {
-      this.loadConsumables();
-      this.sortHistory();
+      this.route.queryParams.subscribe(params => {
+        this.location = params['location'];
+        this.loadConsumables();
+        this.sortHistory();
+      });
+     
     }
   }
 
   loadConsumables() {
     this.firebaseService.getCollection('consumables').subscribe((data: any[]) => {
-      this.consumables = data;
+      this.consumables = data.filter(c => c.location === this.location);
       this.sortConsumables();
     });
   }
 
+  selectLocation(location: string) {
+    console.log('Selected location:', location);
+    this.router.navigate(['/c1table'], { queryParams: { location } });
+  }
+
+
+  async getLocations(): Promise<any[]> {
+    try {
+      const snapshot = await this.firebaseService.firestore.collection('locations').get().toPromise();
+  
+      if (snapshot && !snapshot.empty) {
+        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      } else {
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching locations: ", error);
+      return [];
+    }
+  }
+  
   loadLendData() {
     this.firebaseService.getCollectionlend('c1lend').subscribe((data: any[]) => {
       this.c1lend = data.map((item) => {
@@ -289,6 +316,8 @@ export class C1tablePage implements OnInit {
 
   async addConsumable() {
     const user = this.userService.getUser();
+    const locations = await this.firebaseService.getLocations();
+  
     const alert = await this.alertController.create({
       header: 'ADD CONSUMABLE',
       message: 'Enter the details of the new consumable',
@@ -299,54 +328,79 @@ export class C1tablePage implements OnInit {
         { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level' },
         { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level' },
         { name: 'subtotal', type: 'number', placeholder: 'Available' },
+        { name: 'Comment', type: 'text', placeholder: 'Comment' },
+        
       ],
       buttons: [
         { text: 'CANCEL', role: 'cancel' },
         {
-          text: 'ADD',
+          text: 'NEXT',
           handler: async (data) => {
-            const newId = this.firebaseService.firestore.createId();
-            const newConsumable = {
-              Id: newId,
-              Consumable: data.consumable,
-              Description: data.description,
-              PartNumber: data.partNumber,
-              MinimumLevel: +data.minimumLevel,
-              MaximumLevel: +data.maximumLevel,
-              SubTotal: +data.subtotal,
-              lend: 0,
-              damage: 0,
-              life: 0,
-              total: +data.subtotal // Inicializa el total
-            };
-            const actionAlert = await this.alertController.create({
-              header: `Explain the reason for adding ${data.consumable}`,
-              inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+            const locationAlert = await this.alertController.create({
+              header: 'Select Location',
+              inputs: locations.map(location => ({
+                name: 'location',
+                type: 'radio',
+                label: location.location,
+                value: location.location,
+              })),
               buttons: [
                 { text: 'CANCEL', role: 'cancel' },
                 {
-                  text: 'ACCEPT',
-                  handler: async (reasonData) => {
-                    this.firebaseService.setHistory('HistoryC1', {
-                      user: this.userService.getUser(), 
-                      reason: reasonData.reason,
-                      date: new Date(),
-                      action: 'add',
-                      consumable: newConsumable
+                  text: 'ADD',
+                  handler: async (locationData) => {
+                    const newId = this.firebaseService.generateDocId('consumables');
+                    const newConsumable = {
+                      Id: newId,
+                      Consumable: data.consumable,
+                      Description: data.description,
+                      PartNumber: data.partNumber,
+                      MinimumLevel: +data.minimumLevel,
+                      MaximumLevel: +data.maximumLevel,
+                      SubTotal: +data.subtotal,
+                      Comment: data.Comment,
+                      location: locationData,
+                      lend: 0,
+                      damage: 0,
+                      life: 0,
+                      total: +data.subtotal,
+                    };
+  
+                    const actionAlert = await this.alertController.create({
+                      header: `Explain the reason for adding ${data.consumable}`,
+                      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+                      buttons: [
+                        { text: 'CANCEL', role: 'cancel' },
+                        {
+                          text: 'ACCEPT',
+                          handler: async (reasonData) => {
+                            this.firebaseService.setHistory('HistoryC1', {
+                              user: user,
+                              reason: reasonData.reason,
+                              date: new Date(),
+                              action: 'add',
+                              consumable: newConsumable,
+                            });
+  
+                            this.firebaseService
+                              .setCollectionWithId('consumables', newId, newConsumable)
+                              .then(() => this.loadConsumables())
+                              .catch((error) => console.error('Error adding consumable:', error));
+                          },
+                        },
+                      ],
                     });
   
-                    this.firebaseService.setCollectionWithId('consumables', newId, newConsumable)
-                      .then(() => this.loadConsumables())
-                      .catch((error) => console.error('Error adding consumable:', error));
-                  }
-                }
-              ]
+                    await actionAlert.present();
+                  },
+                },
+              ],
             });
   
-            await actionAlert.present();
-          }
-        }
-      ]
+            await locationAlert.present();
+          },
+        },
+      ],
     });
   
     await alert.present();
@@ -354,6 +408,8 @@ export class C1tablePage implements OnInit {
   
   async updateConsumable(consumable: any) {
     const user = this.userService.getUser();
+    const locations = await this.firebaseService.getLocations();
+  
     const reasonAlert = await this.alertController.create({
       header: 'UPDATE CONSUMABLE',
       message: 'Please provide a reason for the update:',
@@ -373,34 +429,56 @@ export class C1tablePage implements OnInit {
                 { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level', value: consumable.MinimumLevel.toString() },
                 { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level', value: consumable.MaximumLevel.toString() },
                 { name: 'subtotal', type: 'number', placeholder: 'Available', value: consumable.SubTotal.toString() },
+                { name: 'Comment', type: 'text', placeholder: 'Comment'}
               ],
               buttons: [
                 { text: 'CANCEL', role: 'cancel' },
                 {
-                  text: 'SAVE',
-                  handler: (data) => {
-                    const updatedConsumable = {
-                      ...consumable,
-                      Consumable: data.consumable,
-                      Description: data.description,
-                      PartNumber: data.partNumber,
-                      MinimumLevel: +data.minimumLevel,
-                      MaximumLevel: +data.maximumLevel,
-                      SubTotal: +data.subtotal,
-                    };
-                    updatedConsumable.total = this.calculateTotal(updatedConsumable);
+                  text: 'NEXT',
+                  handler: async (data) => {
+                    const locationAlert = await this.alertController.create({
+                      header: 'Select Location',
+                      inputs: locations.map(location => ({
+                        name: 'location',
+                        type: 'radio',
+                        label: location.location,
+                        value: location.location,
+                      })),
+                      buttons: [
+                        { text: 'CANCEL', role: 'cancel' },
+                        {
+                          text: 'SAVE',
+                          handler: async (locationId) => {
+                            const updatedConsumable = {
+                              ...consumable,
+                              Consumable: data.consumable,
+                              Description: data.description,
+                              PartNumber: data.partNumber,
+                              MinimumLevel: +data.minimumLevel,
+                              MaximumLevel: +data.maximumLevel,
+                              SubTotal: +data.subtotal,
+                              Comment: data.Comment,
+                              location: locationId,
+                            };
+                            updatedConsumable.total = this.calculateTotal(updatedConsumable);
   
-                    this.firebaseService.setHistory('HistoryC1', {
-                      user: this.userService.getUser(),
-                      reason: reasonData.reason,
-                      date: new Date(),
-                      action: 'update',
-                      consumable: updatedConsumable
+                            this.firebaseService.setHistory('HistoryC1', {
+                              user: user,
+                              reason: reasonData.reason,
+                              date: new Date(),
+                              action: 'update',
+                              consumable: updatedConsumable
+                            });
+  
+                            this.firebaseService.update(`consumables/${consumable.Id}`, updatedConsumable)
+                              .then(() => this.loadConsumables())
+                              .catch((error) => console.error('Error updating consumable:', error));
+                          }
+                        }
+                      ]
                     });
   
-                    this.firebaseService.update(`consumables/${consumable.Id}`, updatedConsumable)
-                      .then(() => this.loadConsumables())
-                      .catch((error) => console.error('Error updating consumable:', error));
+                    await locationAlert.present();
                   }
                 }
               ]
@@ -414,6 +492,7 @@ export class C1tablePage implements OnInit {
   
     await reasonAlert.present();
   }
+  
   
 
   async deleteConsumable(consumable: any) {

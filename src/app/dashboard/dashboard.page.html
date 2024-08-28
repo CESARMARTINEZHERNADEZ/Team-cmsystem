@@ -2,45 +2,40 @@
   <ion-toolbar class="custom-toolbar">
     <ion-title>Dashboard</ion-title>
     <ion-buttons slot="end">
-      <ion-button routerLink="/login">Log In</ion-button>
+      <ion-button (click)="logout()">Login</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="fondo2">
-  <ion-item-divider>
-    
-  </ion-item-divider>
-  <!-- Agrega un ion-segment para cambiar entre las colecciones -->
-  <ion-segment [(ngModel)]="selectedCollection">
-    <ion-segment-button *ngFor="let collection of collections" [value]="collection.name">
-      {{ collection.displayName }}
+  <ion-item-divider></ion-item-divider>
+  <!-- Segment para seleccionar la ubicación -->
+  <ion-segment [(ngModel)]="selectedLocation" (ionChange)="loadDocuments()">
+    <ion-segment-button *ngFor="let location of locations" [value]="location">
+      {{ location }}
     </ion-segment-button>
   </ion-segment>
-  <ion-item-divider>
+  <ion-item-divider></ion-item-divider>
 
-  </ion-item-divider>
-
-    <div *ngFor="let collection of collections">
-      <div *ngIf="selectedCollection === collection.name">
-        <div class="collection-row">
-          <ion-card *ngFor="let doc of documents[collection.name]" class="collection-item">
-          <ion-button [ngClass]="getButtonClass(doc)" (click)="toggleDetails(doc)">
-              {{ doc.Consumable }}
-            </ion-button>
-            <ion-card-content>
-              <div class="battery-container">
-                <div class="battery">
-                  <div class="battery-level" [ngClass]="batteryClass" [ngStyle]="{'width': batteryLevel + '%'}"></div>
-                  <div class="battery-cap"></div>
-                </div>
-                <div class="battery-label">{{ batteryLevel.toFixed(2) }}%</div>
-              </div>
-         </ion-card-content>
-            <p>Available {{ doc.SubTotal }}</p>
-          </ion-card>
+  <div class="collection-row">
+    <ion-card *ngFor="let doc of documents" class="collection-item">
+      <ion-button [ngClass]="getButtonClass(doc)" (click)="toggleDetails(doc)">
+        {{ doc.Consumable }}
+      </ion-button>
+      <ion-card-content>
+        <div class="battery-container">
+          <div class="battery">
+            <div class="battery-level" [ngClass]="getBatteryClass(doc)" [ngStyle]="{'width': getBatteryLevel(doc) + '%'}"></div>
+            <div class="battery-line min-level" [style.left]="getMinimumLevelPercent(doc) + '%'">MIN</div>
+            <div class="battery-line fifty-percent" style="left: 75%;"></div>
+            <div class="battery-cap"></div>
+          </div>
+          <div class="battery-label">
+            {{ getBatteryLevel(doc) | number: '1.0-2' }}%
+          </div>
         </div>
-      </div>
-    </div>
+      </ion-card-content>
+      <p>Available: {{ doc.SubTotal }}</p>
+    </ion-card>
+  </div>
 </ion-content>
-

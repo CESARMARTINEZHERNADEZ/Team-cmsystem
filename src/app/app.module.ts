@@ -12,6 +12,7 @@ import { AngularFireModule } from '@angular/fire/compat';
 import { environment } from 'src/environments/environment';	
 
 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -30,3 +31,8 @@ import { environment } from 'src/environments/environment';
   bootstrap: [AppComponent],
 })
 export class AppModule { }
+
+
+
+
+

@@ -1,0 +1,57 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="custom-toolbar">
+    <ion-title>Locations</ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Log out</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="background">
+  <!-- Botón de añadir nueva ubicación -->
+  
+
+  <ion-button expand="end" class="add-user-button" (click)="addLocation()">
+    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+    
+    Add Location
+  </ion-button>
+
+  <!-- Contenedor de la tabla -->
+  <div class="table-container">
+    <table class="styled-table">
+      <thead>
+        <tr>
+          <th>Location</th>
+          <th>Description</th>
+          <th>Created by</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let location of locations">
+          <td>{{ location.location }}</td>
+          <td>{{ location.description }}</td>
+          <td>{{ location.creator }}</td>
+          <td>{{ location.date | date: 'medium' }}</td>
+          <td>
+            <ion-button fill="outline" color="tertiary" (click)="updateLocation(location)">
+              <ion-icon slot="start" name="create-outline"></ion-icon>
+              Update
+            </ion-button>
+            <ion-button color="danger" (click)="deleteLocation(location.id)">
+              <ion-icon slot="start" name="trash-outline"></ion-icon>
+              Delete
+            </ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  </div>
+</ion-content>

@@ -11,7 +11,7 @@ import { UserService } from '../services/User.Service';
   styleUrls: ['./life.page.scss', '../app.component.scss'],
 })
 export class LifePage implements OnInit {
-  racks = ['Rack 1 S1', 'Rack 2 S1', 'Rack 1 S2', 'Rack 2 S2'];
+  racks = ['Rack 1 S1', 'Rack 1 S2', 'Rack 2 S1', 'Rack 2 S2'];
   consumables: any[] = [];
   visibleRacks: { [key: string]: boolean } = {};
 
@@ -22,13 +22,19 @@ export class LifePage implements OnInit {
     private alertController: AlertController
   ) {}
 
+  
   ngOnInit() {
-    const user = this.userService.getUser();
-    if (!user) {
-      this.router.navigate(['/dashboard']);
-    }
-    this.loadConsumables();
+   
   }
+
+ionViewWillEnter() {
+  const user = this.userService.getUser();
+  if (!user) {
+    this.router.navigate(['/dashboard']);
+  } else {
+    this.loadConsumables(); // Refresca los datos cada vez que se ingresa a la página
+  }
+}
 
   getRowStart(index: number): number {
     return Math.ceil((index + 1) / 4);

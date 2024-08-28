@@ -1,47 +1,44 @@
-ion-segment-button{
+/* Estilos existentes */
+
+/* Botones de ion-segment */
+ion-segment-button {
   --color-checked: #ffffff; /* Color del texto cuando está seleccionado */
   --background-checked: #007bff;
-  --background:#ffffff ;
+  --background: #ffffff;
   --color: black;
 }
 
-ion-item-divider{
+/* Divisor de ion-item */
+ion-item-divider {
   visibility: hidden;
 }
+
+/* Clases de botones según SubTotal */
 .red-button {
   --background: red !important;
   --color: white !important;
 }
 
 .blue-button {
-  --background: rgb(0, 255, 247) !important;
-  --color: rgb(0, 0, 0) !important;
+  --background: #4caf50 !important;
+  --color: rgb(255, 255, 255) !important;
 }
 
 .default-button {
-  --background: var(--ion-color-primary) !important;
-  --color: white !important;
+  --background: rgb(255, 238, 0) !important;
+  --color: rgb(0, 0, 0) !important;
 }
 
+/* Contenedor del Dashboard */
 .dashboard-container {
   padding: 20px;
-padding: 20px;
-height: 100%;
-background: url('../../assets/fondo.jpg') no-repeat center center fixed;
-background-size: cover;
-width: 100%;
+  height: 100%;
+  background: url('../../assets/fondo.jpg') no-repeat center center fixed;
+  background-size: cover;
+  width: 100%;
 }
 
-.collection-header {
-  margin-bottom: 10px;
-}
-
-.collection-header h2 {
-  margin: 0;
-  font-size: 20px;
-  color: #333;
-}
-
+/* Fila de colección */
 .collection-row {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -49,6 +46,7 @@ width: 100%;
   margin-bottom: 40px;
 }
 
+/* Ítem de colección */
 .collection-item {
   background: #fff;
   border: 1px solid #ddd;
@@ -68,6 +66,7 @@ width: 100%;
   font-size: 16px;
   font-weight: bold;
 }
+
 .battery-container {
   display: flex;
   flex-direction: column;
@@ -76,27 +75,14 @@ width: 100%;
 }
 
 .battery {
-  width: 220px;
+  width: 200px;
   height: 80px;
-  border: 2px solid #808b96; /* Borde azul */
+  border: 2px solid #808b96;
   border-radius: 12px;
   position: relative;
-  background: #fff; /* Fondo blanco */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Sombra */
-  overflow: hidden; /* Para evitar que el nivel de la batería sobresalga */
-}
-
-.battery-cap {
-  content: '';
-  position: absolute;
-  top: 25%;
-  right: -10px;
-  width: 20px;
-  height: 50%;
-  border: 2px solid #808b96; /* Borde azul */
-  background: #fff; /* Fondo blanco */
-  border-radius: 10px 0 0 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .battery-level {
@@ -105,20 +91,34 @@ width: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  z-index: 1;
-  transition: width 0.6s ease-in-out; /* Transición suave */
+  z-index: 0;
+  transition: width 0.6s ease-in-out;
 }
 
-.battery-level.normal {
-  background: linear-gradient(to right, #4caf50, #8bc34a); /* Verde */
+.battery-line {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 2px;
+  background-color: rgb(0, 0, 0); /* Cambia el color de las líneas si es necesario */
+  z-index: 2;
 }
 
-.battery-level.warning {
-  background: linear-gradient(to right, #ff9800, #ffc107); /* Naranja */
+.min-level {
+  background-color: #dd12f3; /* Color para la línea del Minimum Level */
 }
 
-.battery-level.critical {
-  background: linear-gradient(to right, #f44336, #e57373); /* Rojo */
+.fifty-percent {
+  background-color: #3498db; /* Color para la línea del 50% */
+}
+
+.battery-lend {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: rgba(8, 164, 161, 0.987); /* Color más oscuro para el prestado */
+  z-index: 3;
 }
 
 .battery-label {
@@ -127,4 +127,42 @@ width: 100%;
   color: #333;
   font-weight: bold;
 }
-  
+
+.battery-level.normal {
+  background: linear-gradient(to right, #4caf50, #8bc34a);
+}
+
+.battery-level.warning {
+  background: linear-gradient(to right, #ff9800, #ffc107);
+}
+
+.battery-level.critical {
+  background: linear-gradient(to right, #f44336, #e57373);
+}
+
+/* Etiquetas de líneas sobre la batería */
+.line-labels {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.line-label {
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Ajustar posición del cuadrito de la batería */
+.battery-cap {
+  position: absolute;
+  top: 25%;
+  right: -30px; /* Ajuste la posición para que quede fuera del borde de la batería */
+  width: 10px;
+  height: 50%;
+  border: 2px solid #808b96;
+  background: #fff;
+  border-radius: 10px 0 0 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
