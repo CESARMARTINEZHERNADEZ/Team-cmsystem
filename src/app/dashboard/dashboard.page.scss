@@ -74,15 +74,32 @@ ion-item-divider {
   margin-top: 30px;
 }
 
+.battery-wrapper {
+  position: relative; /* Necesario para posicionar el terminal positivo */
+}
+
 .battery {
   width: 200px;
   height: 80px;
   border: 2px solid #808b96;
-  border-radius: 12px;
+  border-radius: 10px;
   position: relative;
   background: #fff;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   overflow: hidden;
+}
+
+.battery-cap {
+  content: ' ';
+  position: absolute;
+  top: 35%;
+  right: -9px;
+  width: 10px;
+  height: 30%;
+  border: 2px solid #808b96; /* Borde azul */
+  background: #808b96; /* Fondo blanco */
+  border-radius: 3px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .battery-level {
@@ -152,17 +169,4 @@ ion-item-divider {
   font-size: 14px;
   color: #333;
   font-weight: bold;
-}
-
-/* Ajustar posición del cuadrito de la batería */
-.battery-cap {
-  position: absolute;
-  top: 25%;
-  right: -30px; /* Ajuste la posición para que quede fuera del borde de la batería */
-  width: 10px;
-  height: 50%;
-  border: 2px solid #808b96;
-  background: #fff;
-  border-radius: 10px 0 0 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

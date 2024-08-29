@@ -29,8 +29,7 @@
           <ion-icon slot="end" [name]="dropdownOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
         </ion-item>
         <ion-list *ngIf="dropdownOpen" class="dropdown-content">
-
-          <ion-item *ngFor="let location of locations" (click)="selectOption(location.location)">
+          <ion-item *ngFor="let location of locations" (click)="selectOption(location.location)" button>
             {{ location.location }}
           </ion-item>
 
