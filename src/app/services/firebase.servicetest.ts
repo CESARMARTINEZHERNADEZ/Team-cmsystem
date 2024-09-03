@@ -109,6 +109,40 @@ export class FirebaseService {
     }
   }
 
+  async getLocationstools(): Promise<any[]> {
+    try {
+      const snapshot = await this.firestore.collection('toolslocation').get().toPromise();
+  
+      // Verificamos si snapshot no es undefined
+      if (snapshot && !snapshot.empty) {
+        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      } else {
+        return []; // Devuelve un array vacío si no hay documentos o si snapshot es undefined
+      }
+    } catch (error) {
+      console.error("Error fetching locations: ", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  }
+
+  async getLocationgeneral(): Promise<any[]> {
+    try {
+      const snapshot = await this.firestore.collection('generallocation').get().toPromise();
+  
+      // Verificamos si snapshot no es undefined
+      if (snapshot && !snapshot.empty) {
+        return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
+      } else {
+        return []; // Devuelve un array vacío si no hay documentos o si snapshot es undefined
+      }
+    } catch (error) {
+      console.error("Error fetching locations: ", error);
+      return []; // Devuelve un array vacío en caso de error
+    }
+  }
+
+
+
   getCollectionData(collection: string) {
     return this.firestore.collection(collection).valueChanges();
   }

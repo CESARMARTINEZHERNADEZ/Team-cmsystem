@@ -21,8 +21,7 @@
     <ion-select placeholder="Select the order of the table" [(ngModel)]="selectedOption" (ionChange)="onOptionChange($event)">
       <ion-select-option value="option1">A-Z Consumable Name</ion-select-option>
       <ion-select-option value="option2">Z-A Consumable Name</ion-select-option>
-      <ion-select-option value="option3">Total Max</ion-select-option>
-      <ion-select-option value="option4">Total Min</ion-select-option>
+      
     </ion-select>
 
     <div class="butt">
@@ -35,47 +34,35 @@
         <th>Location</th>
         <th>Consumable</th>
         <th>Description</th>
-        <th> Comment</th>  
+        <th>Comment</th>  
         <th>Part Number</th>
-        <th>Minimum Level</th>
-        <th>Maximum Level</th>
         <th>Available</th>
-        <th>Lend</th>
+        <th>Used</th>
         <th>Damage</th>
-        <th>End of life</th>
         <th>Total</th>
         <th>Actions</th>
       </tr>
-      <tr *ngFor="let consumable of consumables" [ngClass]="{
-        'blue-row': consumable.SubTotal >= consumable.MaximumLevel, 
-        'red-row': consumable.SubTotal <= consumable.MinimumLevel
-      }">
+      <tr *ngFor="let consumable of consumables">
       <td>{{ consumable.location }}</td>
       <td>{{ consumable.Consumable }}</td>
       <td>{{ consumable.Description }}</td>
       <td>{{ consumable.Comment }}</td>
       <td>{{ consumable.PartNumber }}</td>
-      <td>{{ consumable.MinimumLevel }}</td>
-      <td>{{ consumable.MaximumLevel }}</td>
       <td>{{ consumable.SubTotal }}</td>
       <td>{{ consumable.lend }}</td>
       <td>{{ consumable.damage }}</td>
-      <td>{{ consumable.life }}</td>
       <td>{{ consumable.total }}</td>
       <td>
         <ion-icon name="create-outline" class="iconup" (click)="updateConsumable(consumable)"></ion-icon>
         <ion-icon name="trash-outline" class="icondel" (click)="deleteConsumable(consumable)"></ion-icon>
         <ion-icon name="git-compare-sharp" class="iconact" (click)="showActionAlert(consumable)"> </ion-icon>
-
-      
+        
       </td>
       </tr>
     </table>
   </ion-card>
-  <div class="color-legend" style="text-align: center;">
-    <div><span class="color-box blue"></span> Green: Consumable exceeds or equals the maximum level</div>
-    <div><span class="color-box red"></span> Red: the consumable is less than or equal to the minimum level</div>
-  </div>
+
+
 
   <!-- Historial -->
   <ion-button (click)="toggleTable()" expand="full" color="medium">History</ion-button>

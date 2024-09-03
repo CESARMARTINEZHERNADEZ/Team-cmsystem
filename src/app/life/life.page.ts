@@ -11,7 +11,9 @@ import { UserService } from '../services/User.Service';
   styleUrls: ['./life.page.scss', '../app.component.scss'],
 })
 export class LifePage implements OnInit {
-  racks = ['Rack 1 S1', 'Rack 1 S2', 'Rack 2 S1', 'Rack 2 S2'];
+  racks = ['Rack 1 S1', 'Rack 2 S1', 'Rack 3 S1', 'Rack 4 S1',  'Rack 1 S2', 'Rack 2 S2', 'Rack 3 S2', 'Rack 4 S2'];
+
+ 
   consumables: any[] = [];
   visibleRacks: { [key: string]: boolean } = {};
 
@@ -37,7 +39,7 @@ ionViewWillEnter() {
 }
 
   getRowStart(index: number): number {
-    return Math.ceil((index + 1) / 4);
+    return Math.ceil((index + 1) / 10);
   }
   logout() {
     this.userService.clearUser();
@@ -52,7 +54,7 @@ ionViewWillEnter() {
     return !!this.visibleRacks[rack];
   }
   loadConsumables() {
-    this.consumables = [];
+    this.consumables = []; // Limpia la lista de consumibles antes de cargar nuevos datos
     this.racks.forEach((rack) => {
       this.firebaseService.getCollectionlife(rack).subscribe((data) => {
         const rackConsumables = data.map((item: any) => {
@@ -80,11 +82,16 @@ ionViewWillEnter() {
             cssClass: this.getConsumableClass(status),
           };
         });
-        this.consumables = this.consumables.concat(rackConsumables);
+  
+        // Reemplaza los consumables del rack actual en lugar de concatenarlos
+        this.consumables = [
+          ...this.consumables.filter(c => c.rack !== rack),
+          ...rackConsumables
+        ];
       });
     });
   }
-
+  
   getConsumableClass(status: string): string {
     switch (status) {
       case 'Soon':

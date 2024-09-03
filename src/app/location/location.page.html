@@ -5,53 +5,126 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">Log out</ion-button>
-    </ion-buttons>
+      <ion-button (click)="logout()" >
+      <ion-icon name="log-out"  style="font-size: 40px;">
+  </ion-icon>  
+  log out 
+</ion-button >
+</ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <div class="background">
-  <!-- Botón de añadir nueva ubicación -->
-  
+    <!-- Add Location Button -->
+    <ion-button expand="end" class="add-user-button" (click)="addLocation()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Add location Spare parts inventory
+    </ion-button>
 
-  <ion-button expand="end" class="add-user-button" (click)="addLocation()">
-    <ion-icon slot="start" name="add-circle-outline"></ion-icon>
-    
-    Add Location
-  </ion-button>
+    <!-- Location Table -->
+    <div class="table-container">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Created by</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let location of locations">
+            <td>{{ location.location }}</td>
+            <td>{{ location.description }}</td>
+            <td>{{ location.creator }}</td>
+            <td>{{ location.date }}</td>
+            <td>
+              <ion-button fill="outline" color="tertiary" (click)="updateLocation(location)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button color="danger" color="danger" (click)="deleteLocation(location.id)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-  <!-- Contenedor de la tabla -->
-  <div class="table-container">
-    <table class="styled-table">
-      <thead>
-        <tr>
-          <th>Location</th>
-          <th>Description</th>
-          <th>Created by</th>
-          <th>Date</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let location of locations">
-          <td>{{ location.location }}</td>
-          <td>{{ location.description }}</td>
-          <td>{{ location.creator }}</td>
-          <td>{{ location.date | date: 'medium' }}</td>
-          <td>
-            <ion-button fill="outline" color="tertiary" (click)="updateLocation(location)">
-              <ion-icon slot="start" name="create-outline"></ion-icon>
-              Update
-            </ion-button>
-            <ion-button color="danger" (click)="deleteLocation(location.id)">
-              <ion-icon slot="start" name="trash-outline"></ion-icon>
-              Delete
-            </ion-button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Add General Inventory Button -->
+    <ion-button expand="end" class="add-user-button" (click)="addGeneralInventory()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Add General Inventory
+    </ion-button>
+
+    <!-- General Inventory Table -->
+    <div class="table-container">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Created by</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of generalInventory">
+            <td>{{ item.location }}</td>
+            <td>{{ item.description }}</td>
+            <td>{{ item.creator }}</td>
+            <td>{{ item.date }}</td>
+            <td>
+              <ion-button fill="outline" color="tertiary"(click)="updateGeneralInventory(item)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button color="danger" (click)="deleteGeneralInventory(item.id)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Add Tool Button -->
+    <ion-button expand="end" class="add-user-button" (click)="addTool()">
+      <ion-icon slot="start" name="add-circle-outline"></ion-icon>
+      Add Tool
+    </ion-button>
+
+    <!-- Tools Table -->
+    <div class="table-container">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Location</th>
+            <th>Description</th>
+            <th>Created by</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let tool of tools">
+            <td>{{ tool.location }}</td>
+            <td>{{ tool.description }}</td>
+            <td>{{ tool.creator }}</td>
+            <td>{{ tool.date }}</td>
+            <td>
+              <ion-button fill="outline" color="tertiary" (click)="updateTool(tool)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button color="danger" (click)="deleteTool(tool.id)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </ion-content>

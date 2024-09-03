@@ -28,7 +28,7 @@
           <div class="battery">
             <div class="battery-level" [ngClass]="getBatteryClass(doc)" [ngStyle]="{'width': getBatteryLevel(doc) + '%'}"></div>
             <div class="battery-line min-level" [style.left]="getMinimumLevelPercent(doc) + '%'">MIN</div>
-            <div class="battery-line fifty-percent" style="left: 75%;"></div>
+            <div class="battery-line fifty-percent" [style.left]="getLevelPercent(doc) + '%'"></div>
           </div>
           <div class="battery-cap"></div>
 

@@ -5,11 +5,11 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../services/User.Service'; 
 
 @Component({
-  selector: 'app-c1table',
-  templateUrl: './c1table.page.html',
-  styleUrls: ['./c1table.page.scss','../app.component.scss'],
+  selector: 'app-tools',
+  templateUrl: './tools.page.html',
+  styleUrls: ['./tools.page.scss', '../app.component.scss'],
 })
-export class C1tablePage implements OnInit {
+export class ToolsPage implements OnInit {
   public consumables: any[] = [];
   public selectedOption: string = 'option1';
   public selectedHistoryOption: string = 'actionAsc';
@@ -35,7 +35,7 @@ export class C1tablePage implements OnInit {
     this.selectedOption = 'option1';
     this.selectedHistoryOption = 'actionAsc';
 
-    this.firebaseService.getCollection('HistoryC1').subscribe((historyData: any[]) => {
+    this.firebaseService.getCollection('Historytools').subscribe((historyData: any[]) => {
       this.History = historyData.map((item) => {
         const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
         const date = new Date(timestamp);
@@ -75,13 +75,13 @@ export class C1tablePage implements OnInit {
 
   selectLocation(location: string) {
     console.log('Selected location:', location);
-    this.router.navigate(['/c1table'], { queryParams: { location } });
+    this.router.navigate(['/tools'], { queryParams: { location } });
   }
 
 
   async getLocations(): Promise<any[]> {
     try {
-      const snapshot = await this.firebaseService.firestore.collection('locations').get().toPromise();
+      const snapshot = await this.firebaseService.firestore.collection('toolslocation').get().toPromise();
   
       if (snapshot && !snapshot.empty) {
         return snapshot.docs.map((doc: any) => ({ id: doc.id, ...doc.data() }));
@@ -172,7 +172,7 @@ export class C1tablePage implements OnInit {
 
   async addConsumable() {
     const user = this.userService.getUser();
-    const locations = await this.firebaseService.getLocations();
+    const locations = await this.firebaseService.getLocationstools();
   
     const alert = await this.alertController.create({
       header: 'ADD CONSUMABLE',
@@ -181,8 +181,6 @@ export class C1tablePage implements OnInit {
         { name: 'consumable', type: 'text', placeholder: 'Consumable' },
         { name: 'description', type: 'text', placeholder: 'Description' },
         { name: 'partNumber', type: 'text', placeholder: 'Part Number' },
-        { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level' },
-        { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level' },
         { name: 'subtotal', type: 'number', placeholder: 'Available' },
         { name: 'Comment', type: 'text', placeholder: 'Comment' },
         
@@ -211,14 +209,11 @@ export class C1tablePage implements OnInit {
                       Consumable: data.consumable,
                       Description: data.description,
                       PartNumber: data.partNumber,
-                      MinimumLevel: +data.minimumLevel,
-                      MaximumLevel: +data.maximumLevel,
                       SubTotal: +data.subtotal,
                       Comment: data.Comment,
                       location: locationData,
                       lend: 0,
                       damage: 0,
-                      life: 0,
                       total: +data.subtotal,
                     };
   
@@ -230,7 +225,7 @@ export class C1tablePage implements OnInit {
                         {
                           text: 'ACCEPT',
                           handler: async (reasonData) => {
-                            this.firebaseService.setHistory('HistoryC1', {
+                            this.firebaseService.setHistory('Historytools', {
                               user: user,
                               reason: reasonData.reason,
                               date: new Date(),
@@ -264,7 +259,7 @@ export class C1tablePage implements OnInit {
   
   async updateConsumable(consumable: any) {
     const user = this.userService.getUser();
-    const locations = await this.firebaseService.getLocations();
+    const locations = await this.firebaseService.getLocationstools();
   
     const reasonAlert = await this.alertController.create({
       header: 'UPDATE CONSUMABLE',
@@ -282,8 +277,6 @@ export class C1tablePage implements OnInit {
                 { name: 'consumable', type: 'text', placeholder: 'Consumable', value: consumable.Consumable },
                 { name: 'description', type: 'text', placeholder: 'Description', value: consumable.Description },
                 { name: 'partNumber', type: 'text', placeholder: 'Part Number', value: consumable.PartNumber },
-                { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level', value: consumable.MinimumLevel.toString() },
-                { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level', value: consumable.MaximumLevel.toString() },
                 { name: 'subtotal', type: 'number', placeholder: 'Available', value: consumable.SubTotal.toString() },
                 { name: 'Comment', type: 'text', placeholder: 'Comment', value: consumable.Comment },
             
@@ -314,8 +307,6 @@ export class C1tablePage implements OnInit {
                               Consumable: data.consumable,
                               Description: data.description,
                               PartNumber: data.partNumber,
-                              MinimumLevel: +data.minimumLevel,
-                              MaximumLevel: +data.maximumLevel,
                               SubTotal: +data.subtotal,
                               Comment: data.Comment,
                               location: locationId,
@@ -323,7 +314,7 @@ export class C1tablePage implements OnInit {
                             };
                             updatedConsumable.total = this.calculateTotal(updatedConsumable);
   
-                            this.firebaseService.setHistory('HistoryC1', {
+                            this.firebaseService.setHistory('Historytools', {
                               user: user,
                               reason: reasonData.reason,
                               date: new Date(),
@@ -367,7 +358,7 @@ export class C1tablePage implements OnInit {
         {
           text: 'NEXT',
           handler: async (reasonData) => {
-            await this.firebaseService.setHistory('HistoryC1', {
+            await this.firebaseService.setHistory('Historytools', {
               user: this.userService.getUser(),
               reason: reasonData.reason,
               date: new Date(),
@@ -408,7 +399,7 @@ export class C1tablePage implements OnInit {
 
 
   calculateTotal(consumable: any) {
-    return consumable.SubTotal + consumable.lend + consumable.damage + consumable.life;
+    return consumable.SubTotal + consumable.lend + consumable.damage;
   }
 
 
@@ -427,7 +418,7 @@ export class C1tablePage implements OnInit {
           }
         },
         {
-          text: 'Lend',
+          text: 'Used',
           handler: data => {
             this.updateConsumableQuantity(consumable, -data.quantity, 'lend', data.reason);
           }
@@ -436,12 +427,6 @@ export class C1tablePage implements OnInit {
           text: 'Damage',
           handler: data => {
             this.updateConsumableQuantity(consumable, -data.quantity, 'damage', data.reason);
-          }
-        },
-        {
-          text: 'Life',
-          handler: data => {
-            this.updateConsumableQuantity(consumable, -data.quantity, 'life', data.reason);
           }
         },
         { text: 'Cancelar', role: 'cancel' }
@@ -464,10 +449,6 @@ export class C1tablePage implements OnInit {
         break;
       case 'damage':
         consumable.damage -= quantity;
-        consumable.lend += quantity;
-        break;
-      case 'life':
-        consumable.lend -= quantity;
         consumable.SubTotal += quantity;
         break;
     }
@@ -477,7 +458,7 @@ export class C1tablePage implements OnInit {
   
     // Guardar en la base de datos
     this.firebaseService.update(`consumables/${consumable.Id}`, consumable).then(() => {
-      this.firebaseService.setHistory('HistoryC1', {
+      this.firebaseService.setHistory('Historytools', {
         user: user,
         reason: reason,
         date: new Date(),

@@ -3,9 +3,10 @@
 /* Botones de ion-segment */
 ion-segment-button {
   --color-checked: #ffffff; /* Color del texto cuando está seleccionado */
-  --background-checked: #007bff;
+  --background-checked: #34495e;
   --background: #ffffff;
   --color: black;
+  border-radius: 10px;
 }
 
 /* Divisor de ion-item */

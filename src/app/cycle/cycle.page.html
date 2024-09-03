@@ -1,20 +1,24 @@
 <ion-header [translucent]="true">
   <ion-toolbar class="custom-toolbar">
-    <ion-title>Life Cycle</ion-title>
+    <ion-title>Slot Management</ion-title>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">
-        log out
-      </ion-button>
-    </ion-buttons>
+      <ion-button (click)="logout()" >
+      <ion-icon name="log-out"  style="font-size: 40px;">
+  </ion-icon>  
+  log out 
+</ion-button >
+</ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 
 <ion-content class="fondo2">
+ 
   <ion-segment [(ngModel)]="selectedRack" (ionChange)="selectRack($event.detail.value?.toString() || 'Rack1')"> 
+
     <ion-segment-button value="Rack 1 S1">
       <ion-label>Rack 1 S1</ion-label>
     </ion-segment-button>
@@ -27,6 +31,19 @@
     <ion-segment-button value="Rack 2 S2">
       <ion-label>Rack 2 S2</ion-label>
     </ion-segment-button>
+    <ion-segment-button value="Rack 3 S1">
+      <ion-label>Rack 3 S1</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Rack 3 S2">
+      <ion-label>Rack 3 S2</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Rack 4 S1">
+      <ion-label>Rack 4 S1</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="Rack 4 S2">
+      <ion-label>Rack 4 S2</ion-label>
+    </ion-segment-button>
+
   </ion-segment>
 
   <!-- Contenedores de los racks -->

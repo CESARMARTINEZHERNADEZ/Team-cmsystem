@@ -17,6 +17,15 @@ width: 100%;
   position: relative;
 }
 
+.but{
+ 
+  --background: #355d85;
+  --background-hover: #ffffff;
+  color:#ffffff;
+
+  border-radius: 10px;
+}
+
 .consumables-container {
   position: absolute;
   top: 100%;
@@ -41,7 +50,7 @@ width: 100%;
 }
 
 .default-button {
-  --background: var(--ion-color-primary) !important;
+  --background:  rgb(0, 140, 255) !important;
   --color: white !important;
 }
 

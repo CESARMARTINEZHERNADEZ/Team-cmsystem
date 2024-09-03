@@ -5,8 +5,12 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">Log out</ion-button>
-    </ion-buttons>
+      <ion-button (click)="logout()" >
+      <ion-icon name="log-out"  style="font-size: 40px;">
+  </ion-icon>  
+  log out 
+</ion-button >
+</ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -37,12 +41,10 @@
           <td>{{ user.password }}</td>
           <td>
             <ion-button fill="outline" color="tertiary" (click)="editUser(user)">
-              <ion-icon slot="start" name="create-outline"></ion-icon>
-              Update
+              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
             </ion-button>
             <ion-button color="danger" (click)="deleteUser(user.id)">
-              <ion-icon slot="start" name="trash-outline"></ion-icon>
-              Delete
+              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
             </ion-button>
           </td>
         </tr>

@@ -106,6 +106,7 @@ export class C1counterPage implements OnInit {
               }).then(alert => alert.present());
               return false; // Prevent the alert from closing
             }
+          
   
             const updateData = { ...data, consumable: consumable.Consumable, date: new Date() };
   

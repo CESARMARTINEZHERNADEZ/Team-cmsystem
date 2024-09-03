@@ -15,6 +15,14 @@ ion-content {
       width: 100%;
       }
 
+
+      .styled-table thead tr {
+        background-color: #34495e;
+        color: #ffffff;
+        text-align: left;
+        font-weight: bold;
+      }
+      
 .responsive-container {
     display: flex;
     justify-content: space-between;
@@ -31,10 +39,11 @@ ion-content {
 }
 
 table {
-    border: 2px solid black;
+    border: 5px solid black;
     width: 100%;
     table-layout: fixed;
     border-collapse: collapse; /* Agregado para un mejor estilo de tabla */
+    
 }
 
 th {
@@ -54,8 +63,6 @@ td {
     
 }
 
-
-
 .iconup {
     font-size: 24px; 
     color: blue;
@@ -65,7 +72,6 @@ td {
     font-size: 24px; 
     color: rgb(133, 0, 0);
 }
-
 .iconact {
     font-size: 24px; 
     color: rgba(161, 1, 185, 0.691);

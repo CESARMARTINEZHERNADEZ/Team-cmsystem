@@ -53,6 +53,15 @@ const routes: Routes = [
     path: 'location',
     loadChildren: () => import('./location/location.module').then( m => m.LocationPageModule)
   },
+  {
+    path: 'tools',
+    loadChildren: () => import('./tools/tools.module').then( m => m.ToolsPageModule)
+  },
+  {
+    path: 'generalinventory',
+    loadChildren: () => import('./generalinventory/generalinventory.module').then( m => m.GeneralinventoryPageModule)
+  },
+
 
 
 
