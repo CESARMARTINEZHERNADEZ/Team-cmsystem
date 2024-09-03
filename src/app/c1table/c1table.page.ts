@@ -439,7 +439,7 @@ export class C1tablePage implements OnInit {
           }
         },
         {
-          text: 'Life',
+          text: 'End of Life',
           handler: data => {
             this.updateConsumableQuantity(consumable, -data.quantity, 'life', data.reason);
           }
