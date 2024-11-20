@@ -50,7 +50,7 @@ width: 100%;
 }
 
 .default-button {
-  --background:  rgb(0, 140, 255) !important;
+  --background:  rgb(3, 75, 231) !important;
   --color: white !important;
 }
 
@@ -95,4 +95,8 @@ ion-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.paused {
+  background-color: gray; /* Pinta de gris cuando está pausado */
 }

@@ -47,8 +47,8 @@
         <th>Actions</th>
       </tr>
       <tr *ngFor="let consumable of consumables" [ngClass]="{
-        'blue-row': consumable.SubTotal >= consumable.MaximumLevel, 
-        'red-row': consumable.SubTotal <= consumable.MinimumLevel
+        'blue-row': consumable.total >= consumable.MaximumLevel, 
+        'red-row': consumable.total <= consumable.MinimumLevel
       }">
       <td>{{ consumable.location }}</td>
       <td>{{ consumable.Consumable }}</td>
@@ -57,8 +57,25 @@
       <td>{{ consumable.PartNumber }}</td>
       <td>{{ consumable.MinimumLevel }}</td>
       <td>{{ consumable.MaximumLevel }}</td>
-      <td>{{ consumable.SubTotal }}</td>
-      <td>{{ consumable.lend }}</td>
+      <td>
+        <ion-button 
+          (click)="handleSubTotalClick(consumable)" 
+          size="small" 
+          expand="block" 
+          class="transparent-button">
+          {{ consumable.SubTotal }}
+        </ion-button>
+      </td>
+      <td>
+        <ion-button 
+          (click)="handlelendClick(consumable)" 
+          size="small" 
+          expand="block" 
+          class="transparent-button">
+          {{ consumable.lend }}
+        </ion-button>
+      </td>
+
       <td>{{ consumable.damage }}</td>
       <td>{{ consumable.life }}</td>
       <td>{{ consumable.total }}</td>

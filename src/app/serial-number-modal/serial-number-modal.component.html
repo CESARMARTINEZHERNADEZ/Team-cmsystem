@@ -1,0 +1,19 @@
+<div class="modal-header">
+  <h2>Serial Numbers for {{ consumableName }}</h2>
+  <button class="close-button" (click)="dismiss()">Close</button>
+</div>
+
+<div class="modal-content">
+  <table class="serial-numbers-table">
+    <thead>
+      <tr>
+        <th>Serial Number</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let serialNumber of serialNumbers">
+        <td>{{ serialNumber }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

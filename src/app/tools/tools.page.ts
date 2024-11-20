@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.servicetest';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../services/User.Service'; 
+import { LendModalComponent } from '../lend-modal/lend-modal.component';
+
 
 @Component({
   selector: 'app-tools',
@@ -24,12 +27,17 @@ export class ToolsPage implements OnInit {
   public totalPages = 0;
   location: string = '';
 
+  public c1lend: any[] = [];
+  public showLend = false;
+
+
   constructor(
     private alertController: AlertController,
     private firebaseService: FirebaseService,
     private userService: UserService, 
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalController: ModalController,
   ) {
     this.consumables = [];
     this.selectedOption = 'option1';
@@ -65,6 +73,14 @@ export class ToolsPage implements OnInit {
      
     }
   }
+
+  async presentLendModal() {
+    const modal = await this.modalController.create({
+      component: LendModalComponent,
+    });
+    return await modal.present();
+  }
+
 
   loadConsumables() {
     this.firebaseService.getCollection('consumables').subscribe((data: any[]) => {
@@ -404,6 +420,7 @@ export class ToolsPage implements OnInit {
 
 
   async showActionAlert(consumable: any) {
+   
     const alert = await this.alertController.create({
       header: `Actions for ${consumable.Consumable}`,
       inputs: [
@@ -446,17 +463,31 @@ export class ToolsPage implements OnInit {
       case 'lend':
         consumable.lend -= quantity;
         consumable.SubTotal += quantity;
+    
+        // Guardar en la colección toolslend con la cantidad en positivo
+        const newId = this.firebaseService.generateDocId('toolslend');
+        this.firebaseService.addToCollection('toolslend', {
+          Id: newId,
+          Quantity: Math.abs(quantity),  // Asegurar que la cantidad sea positiva
+          reason: reason,
+          user: user,
+          date: new Date(),
+          consumableId: consumable.Id, // También puedes guardar el ID del consumible si lo necesitas
+          ConsumableName: consumable.Consumable
+        }).catch(error => {
+          console.error('Error saving to toolslend:', error);
+        });
         break;
       case 'damage':
         consumable.damage -= quantity;
         consumable.SubTotal += quantity;
         break;
     }
-    
+  
     // Recalcular el Total
     consumable.total = consumable.SubTotal + consumable.lend;
   
-    // Guardar en la base de datos
+    // Guardar en la base de datos la actualización del consumible
     this.firebaseService.update(`consumables/${consumable.Id}`, consumable).then(() => {
       this.firebaseService.setHistory('Historytools', {
         user: user,
@@ -470,4 +501,96 @@ export class ToolsPage implements OnInit {
       console.error('Error updating consumable:', error);
     });
   }
-}  
+
+
+  toggleLend() {
+    this.showLend = !this.showLend;
+    if (this.showLend) {
+      this.loadLendData();
+    }
+  }
+
+  loadLendData() {
+    this.firebaseService.getCollectionlend('toolslend').subscribe((data: any[]) => {
+      this.c1lend = data.map((item) => {
+        const timestamp = item.date.seconds * 1000 + item.date.nanoseconds / 1000000;
+        const date = new Date(timestamp);
+        const formattedDate = date.toLocaleString('es-MX', { timeZone: 'America/Mexico_City' });
+  
+        return {
+          ...item,
+          date: formattedDate,
+          Quantity: Number(item.Quantity) // Asegurarse de que quantity sea un número
+        };
+      });
+  
+      
+    });
+  }
+
+  async confirmDeleteLend(item: any) {
+    const user = this.userService.getUser();
+    const reasonAlert = await this.alertController.create({
+      header: 'RETURN LEND',
+      message: `Please provide a reason for returning the lend of ${item.ConsumableName}:`,
+      inputs: [{ name: 'reason', type: 'text', placeholder: 'Reason' }],
+      buttons: [
+        { text: 'CANCEL', role: 'cancel' },
+        {
+          text: 'NEXT',
+          handler: async (reasonData) => {
+            // Confirm deletion
+            const deleteAlert = await this.alertController.create({
+              header: 'RETURN LEND',
+              message: `Are you sure you want to return the lend of ${item.ConsumableName}?`,
+              buttons: [
+                { text: 'CANCEL', role: 'cancel' },
+                {
+                  text: 'RETURN',
+                  handler: async () => {
+                    try {
+                      // Delete the document from the 'c1lend' collection
+                      await this.firebaseService.deleteDocumentlend('toolslend', item.Id);
+                   
+                      // Log the deletion reason and user information in history
+                      await this.firebaseService.setHistory('Histortools', {
+                       
+                        user: this.userService.getUser(),
+                        reason: reasonData.reason,
+                        date: new Date(),
+                        action: 'return lend',
+                        consumable: item
+                      });
+  
+                      // Reload lend data to reflect changes
+                      this.loadLendData();  // Refresh the lend data after deletion
+  
+                      // Update the 'lend' field in the 'consumables' collection
+                      const lendQuantity = Number(item.Quantity)
+                      const consumable = this.consumables.find(c => c.ConsumableName === item.consumable);
+                      if (consumable) {
+                        consumable.lend -= lendQuantity; // Subtract the lend quantity
+                        consumable.SubTotal += lendQuantity; // Add the lend quantity back to SubTotal
+  
+                        await this.firebaseService.update(`consumables/${consumable.Id}`, {
+                          lend: consumable.lend,
+                          SubTotal: consumable.SubTotal
+                        });
+                      }
+                    } catch (error) {
+                      console.error('Error deleting lend or updating consumable fields:', error);
+                    }
+                  }
+                }
+              ]
+            });
+  
+            await deleteAlert.present();
+          }
+        }
+      ]
+    });
+  
+    await reasonAlert.present();
+  }
+}

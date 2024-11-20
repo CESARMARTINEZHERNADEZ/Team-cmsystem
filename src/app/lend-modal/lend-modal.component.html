@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Consumable Lending</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Consumables Lent</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <div class="responsive-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Consumable</th>
+              <th>Quantities</th>
+              <th>User</th>
+              <th>Date</th>
+              <th>Reason</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of toolslendData">
+              <td>{{ item.ConsumableName }}</td>
+              <td>{{ item.Quantity }}</td>
+              <td>{{ item.user?.fullName }}</td>
+              <td>{{ item.date | date }}</td>
+              <td>{{ item.reason }}</td>
+              <td>
+                <ion-button (click)="confirmDeleteLend(item)" color="danger">Return</ion-button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

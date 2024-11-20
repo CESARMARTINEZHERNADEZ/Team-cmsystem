@@ -3,7 +3,9 @@ import { AngularFirestore} from '@angular/fire/compat/firestore';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
 import { Observable } from 'rxjs';
-
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import { map } from 'rxjs/operators'; // Importar map desde rxjs/operators
 
 
 
@@ -17,6 +19,37 @@ export class FirebaseService {
     private storage: AngularFireStorage,
     
   ) { }
+
+
+
+  updateConsumableSubTotal(consumableId: string, newSubTotal: number): Promise<void> {
+    return this.firestore.collection('consumables').doc(consumableId).update({
+      SubTotal: newSubTotal
+    });
+  }
+  
+  // Actualizar el Lend de un consumible
+  updateConsumableLend(consumableId: string, newLend: number): Promise<void> {
+    return this.firestore.collection('consumables').doc(consumableId).update({
+      lend: newLend
+    });
+  }
+
+
+
+
+  getCollectionWhere(collection: string, field: string, operator: firebase.firestore.WhereFilterOp, value: any): Promise<firebase.firestore.QuerySnapshot> {
+    return firebase.firestore().collection(collection).where(field, operator, value).get();
+}
+deleteFromCollection(collection: string, docId: string): Promise<void> {
+  return this.firestore.collection(collection).doc(docId).delete();
+}
+
+
+getToolslendCollection() {
+  return this.firestore.collection('toolslend').valueChanges();
+}
+
 
   setCollectionWithId(path: string, id: string, data: any) {
     return this.firestore.collection(path).doc(id).set(data);
@@ -75,12 +108,17 @@ export class FirebaseService {
 
 
 
-  deleteDocumentlend(collectionName: string, docId: string) {
-    console.log(`Deleting document ${docId} from collection ${collectionName}`);
-    return this.firestore.collection(collectionName).doc(docId).delete();
+  async deleteDocumentlend(collectionName: string, documentId: string): Promise<void> {
+    try {
+      const docRef = this.firestore.collection(collectionName).doc(documentId);
+      await docRef.delete();
+      console.log(`Document ${documentId} deleted from collection ${collectionName}`);
+    } catch (error) {
+      console.error(`Error deleting document ${documentId} from collection ${collectionName}:`, error);
+      throw error;
+    }
   }
 
- 
 
   getCollectionByClockNumberAndPassword(path: string, clockNumber: string, password: string) {
     return this.firestore.collection(path, ref => ref
@@ -182,8 +220,8 @@ export class FirebaseService {
     }
   }
 
-  // Otros métodos de tu servicio Firebase...
 }
+
  
 
 

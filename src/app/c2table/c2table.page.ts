@@ -170,6 +170,7 @@ export class C2tablePage implements OnInit {
     });
   }
   
+  
   updateConsumablesLife() {
     const lifeQuantities: { [key: string]: number } = {};
   

@@ -39,6 +39,9 @@
               <p>{{ consumable.lifecyclePercentage.toFixed(2) }}% - {{ consumable.status }}</p>
             </ion-label>
             <ion-button (click)="resetInitializationDate(consumable)" color="medium">Reset</ion-button>
+            <ion-button (click)="toggleConsumableTime(consumable)" color="medium">
+              {{ consumable.isPaused ? 'Resume' : 'Pause' }}
+            </ion-button>
           </ion-item>
         </div>
       </div>

@@ -68,29 +68,33 @@ ionViewWillEnter() {
               100),
             100
           );
+  
           let status = 'OK';
           if (lifecyclePercentage >= 100) {
             status = 'Replace';
           } else if (lifecyclePercentage >= 90) {
             status = 'Soon';
           }
+  
           return {
             ...item,
             rack,
             lifecyclePercentage,
             status,
             cssClass: this.getConsumableClass(status),
+            isPaused: false, // Propiedad para rastrear si el tiempo está detenido
+            originalInitializationDate: item.initializationDate, // Para restaurar la fecha original si se reanuda
           };
         });
   
-        // Reemplaza los consumables del rack actual en lugar de concatenarlos
         this.consumables = [
-          ...this.consumables.filter(c => c.rack !== rack),
+          ...this.consumables.filter((c) => c.rack !== rack),
           ...rackConsumables
         ];
       });
     });
   }
+  
   
   getConsumableClass(status: string): string {
     switch (status) {
@@ -176,5 +180,25 @@ ionViewWillEnter() {
     }
   }
 
-
+  toggleConsumableTime(consumable: any) {
+    if (consumable.isPaused) {
+      // Reanudar tiempo
+      consumable.initializationDate = consumable.originalInitializationDate; // Restaurar la fecha original
+    } else {
+      // Pausar tiempo
+      consumable.originalInitializationDate = consumable.initializationDate; // Guardar la fecha original
+      consumable.initializationDate = moment().format('YYYY-MM-DD'); // Establecer la fecha actual como pausa
+    }
+    
+    consumable.isPaused = !consumable.isPaused; // Cambiar el estado de pausa
+    this.updateConsumableStatus(consumable); // Actualizar la vista y el estado del consumible
+  }
+  
+  updateConsumableStatus(consumable: any) {
+    if (consumable.isPaused) {
+      consumable.cssClass = 'paused'; // Aplicar estilo gris si está pausado
+    } else {
+      consumable.cssClass = this.getConsumableClass(consumable.status); // Restaurar estilo según el estado
+    }
+  }
 }

@@ -1,0 +1,31 @@
+.table-container {
+    overflow-x: auto;
+    padding: 16px;
+  }
+  
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .styled-table thead tr {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+  
+  .styled-table th,
+  .styled-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .styled-table tbody tr:hover {
+    background-color: #f1f1f1;
+  }
+  
+  .styled-table th {
+    font-weight: bold;
+  }
+  

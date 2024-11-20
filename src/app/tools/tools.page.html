@@ -25,7 +25,9 @@
     </ion-select>
 
     <div class="butt">
+      
       <ion-button (click)="addConsumable()" color="danger">Add Consumable</ion-button>
+
     </div>
   </div>
   <ion-card>
@@ -61,6 +63,58 @@
       </tr>
     </table>
   </ion-card>
+
+
+
+ <!-- Lend -->
+<ion-button (click)="toggleLend()" expand="full" color="medium">Lend</ion-button>
+
+<ion-card *ngIf="showLend">
+  <ion-card-header>
+    <ion-card-title>Consumable Lending</ion-card-title>
+  </ion-card-header>
+  <ion-card-content>
+    <div class="responsive-container">
+      <table>
+        <thead>
+          <tr>
+          <th>Consumable</th>
+          <th>Quantities</th>
+          <th>User</th>
+          <th>Date</th>
+          <th>Reason</th>
+          <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of c1lend">
+            <td>{{ item.ConsumableName  }}</td>
+            <td>{{ item.Quantity}}</td>
+            <td>{{ item.user.fullName }}</td>
+            <td>{{ item.date}}</td>
+            <td>{{ item.reason }}</td>
+          
+            <td>
+              <ion-button (click)="confirmDeleteLend(item)" color="danger">Return</ion-button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ion-card-content>
+</ion-card>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

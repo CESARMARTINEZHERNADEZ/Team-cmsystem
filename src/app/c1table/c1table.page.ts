@@ -3,6 +3,10 @@ import { AlertController } from '@ionic/angular';
 import { FirebaseService } from '../services/firebase.servicetest';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UserService } from '../services/User.Service'; 
+import { AngularFirestoreCollection, AngularFirestoreDocument, Query } from '@angular/fire/compat/firestore';
+import { ModalController } from '@ionic/angular';
+import { SerialNumberModalComponent } from '../serial-number-modal/serial-number-modal.component'; // Adjust the path accordingly
+import { SerialNumberlendModalComponent } from '../serial-numberlend-modal/serial-numberlend-modal.component';
 
 @Component({
   selector: 'app-c1table',
@@ -29,7 +33,8 @@ export class C1tablePage implements OnInit {
     private firebaseService: FirebaseService,
     private userService: UserService, 
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private modalController: ModalController // Inject ModalController here
   ) {
     this.consumables = [];
     this.selectedOption = 'option1';
@@ -65,6 +70,92 @@ export class C1tablePage implements OnInit {
      
     }
   }
+ 
+  async handleSubTotalClick(consumable: any) {
+    try {
+      // Get all documents from the collection where consumableName matches the selected consumable name
+      const lendSnSnapshot = await this.firebaseService.getCollectionWhere('Numparts', 'consumableName', '==', consumable.Consumable);
+  
+      if (lendSnSnapshot.empty) {
+        // Show an alert if no serial numbers are found
+        const alert = await this.alertController.create({
+          header: 'No Serial Numbers Found',
+          message: `No serial numbers found for ${consumable.Consumable}`,
+          buttons: ['OK']
+        });
+        await alert.present();
+      } else {
+        // Collect the serial numbers from the documents found
+        const serialNumbers: string[] = [];
+  
+        lendSnSnapshot.forEach(doc => {
+          serialNumbers.push(doc.data()['serialNumber']);
+        });
+  
+        // Present the serial numbers in a modal
+        const modal = await this.modalController.create({
+          component: SerialNumberModalComponent,
+          componentProps: {
+            consumableName: consumable.Consumable,
+            serialNumbers: serialNumbers // Ensure this is correct
+          }
+        });
+  
+        await modal.present();
+      }
+    } catch (error) {
+      console.error('Error fetching serial numbers:', error);
+    }
+  }
+  
+  async handlelendClick(consumable: any) {
+    try {
+      // Obtener todos los documentos de la colección lendSn donde el consumableName sea igual al nombre del consumable seleccionado
+      const lendSnSnapshot = await this.firebaseService.getCollectionWhere('lendSn', 'consumableName', '==', consumable.Consumable);
+  
+      if (lendSnSnapshot.empty) {
+        // Si no hay resultados, mostrar un mensaje de alerta
+        const alert = await this.alertController.create({
+          header: 'No Serial Numbers Found',
+          message: `No serial numbers found for ${consumable.Consumable}`,
+          buttons: ['OK']
+        });
+        await alert.present();
+      } else {
+        // Recopilar los serial numbers de los documentos encontrados
+        const serialNumbers: string[] = [];
+        const reason: string[] = [];
+
+        lendSnSnapshot.forEach(doc => {
+          serialNumbers.push(doc.data()['serialNumber']);
+          reason.push(doc.data()['reason']);
+
+        });
+  
+       // Present the serial numbers in a modal
+       const modal = await this.modalController.create({
+        component: SerialNumberlendModalComponent,
+        componentProps: {
+          consumableName: consumable.Consumable,
+          serialNumbers: serialNumbers, // Ensure this is correct
+          reason: reason,
+        }
+      });
+
+      await modal.present();
+    }
+  } catch (error) {
+    console.error('Error fetching serial numbers:', error);
+  }
+}
+
+
+
+
+
+
+
+
 
   loadConsumables() {
     this.firebaseService.getCollection('consumables').subscribe((data: any[]) => {
@@ -284,7 +375,6 @@ export class C1tablePage implements OnInit {
                 { name: 'partNumber', type: 'text', placeholder: 'Part Number', value: consumable.PartNumber },
                 { name: 'minimumLevel', type: 'number', placeholder: 'Minimum Level', value: consumable.MinimumLevel.toString() },
                 { name: 'maximumLevel', type: 'number', placeholder: 'Maximum Level', value: consumable.MaximumLevel.toString() },
-                { name: 'subtotal', type: 'number', placeholder: 'Available', value: consumable.SubTotal.toString() },
                 { name: 'Comment', type: 'text', placeholder: 'Comment', value: consumable.Comment },
             
 
@@ -408,85 +498,336 @@ export class C1tablePage implements OnInit {
 
 
   calculateTotal(consumable: any) {
-    return consumable.SubTotal + consumable.lend + consumable.damage + consumable.life;
-  }
+    consumable.total = consumable.SubTotal + consumable.lend; // Asegurarse de que siempre se calcule con SubTotal y lend
+    return consumable.total;
+}
 
-
+ 
   async showActionAlert(consumable: any) {
     const alert = await this.alertController.create({
-      header: `Actions for ${consumable.Consumable}`,
-      inputs: [
-        { name: 'quantity', type: 'number', placeholder: 'Quantity' },
-        { name: 'reason', type: 'text', placeholder: 'Reason' }
-      ],
-      buttons: [
-        {
-          text: 'Add',
-          handler: data => {
-            this.updateConsumableQuantity(consumable, +data.quantity, 'increment', data.reason);
-          }
-        },
-        {
-          text: 'Lend',
-          handler: data => {
-            this.updateConsumableQuantity(consumable, -data.quantity, 'lend', data.reason);
-          }
-        },
-        {
-          text: 'Damage',
-          handler: data => {
-            this.updateConsumableQuantity(consumable, -data.quantity, 'damage', data.reason);
-          }
-        },
-        {
-          text: 'End of Life',
-          handler: data => {
-            this.updateConsumableQuantity(consumable, -data.quantity, 'life', data.reason);
-          }
-        },
-        { text: 'Cancelar', role: 'cancel' }
-      ]
+        header: `Actions for ${consumable.Consumable}`,
+        buttons: [
+            {
+                text: 'Add',
+                cssClass: 'custom-alert-button',
+                handler: async () => {
+                    const scanAlert = await this.alertController.create({
+                        header: 'Scan or Enter SN',
+                        inputs: [
+                            { name: 'serialNumber', type: 'text', placeholder: 'Scan/Enter SN' }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Accept',
+                                handler: data => {
+                                    this.handleAddAction(consumable, data.serialNumber);
+                                }
+                            },
+                            {
+                                text: 'Cancel',
+                                role: 'cancel',
+                                cssClass: 'custom-alert-cancel'
+                            }
+                        ]
+                    });
+                    await scanAlert.present();
+                }
+            },
+            {
+                text: 'Lend',
+                handler: async () => {
+                    const lendAlert = await this.alertController.create({
+                        header: 'Enter SN and Reason',
+                        inputs: [
+                            { name: 'serialNumber', type: 'text', placeholder: 'Enter SN' },
+                            { name: 'reason', type: 'text', placeholder: 'Enter Reason' }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Enter',
+                                handler: data => {
+                                    this.handleLendAction(consumable, data.serialNumber, data.reason);
+                                }
+                            },
+                            {
+                                text: 'Cancel',
+                                role: 'cancel',
+                                cssClass: 'custom-alert-cancel'
+                            }
+                        ]
+                    });
+                    await lendAlert.present();
+                }
+            },
+            {
+                text: 'Replace',
+                handler: async () => {
+                    const replaceAlert = await this.alertController.create({
+                        header: 'Enter SN and Choose Action',
+                        inputs: [
+                            { name: 'serialNumber', type: 'text', placeholder: 'Enter SN' }
+                        ],
+                        buttons: [
+                            {
+                                text: 'Damage',
+                                handler: data => {
+                                    this.handleReplaceAction(consumable, data.serialNumber, 'damage');
+                                }
+                            },
+                            {
+                                text: 'End of Life',
+                                handler: data => {
+                                    this.handleReplaceAction(consumable, data.serialNumber, 'life');
+                                }
+                            },
+                            {
+                                text: 'Cancel',
+                                role: 'cancel',
+                                cssClass: 'custom-alert-cancel'
+                            }
+                        ]
+                    });
+                    await replaceAlert.present();
+                }
+            },
+            {
+                text: 'Cancel',
+                role: 'cancel',
+                cssClass: 'custom-alert-cancel'
+            }
+        ]
     });
-  
-    await alert.present();
-  }
 
-  updateConsumableQuantity(consumable: any, quantity: number, action: string, reason: string) {
-    const user = this.userService.getUser();
-    
-    switch (action) {
-      case 'increment':
-        consumable.SubTotal += quantity;
-        break;
-      case 'lend':
-        consumable.lend -= quantity;
-        consumable.SubTotal += quantity;
-        break;
-      case 'damage':
-        consumable.damage -= quantity;
-        consumable.lend += quantity;
-        break;
-      case 'life':
-        consumable.lend -= quantity;
-        consumable.SubTotal += quantity;
-        break;
+    await alert.present();
+}
+
+handleAddAction(consumable: any, serialNumber: string) {
+  const user = this.userService.getUser();
+
+  this.firebaseService.getCollectionWhere('Numparts', 'serialNumber', '==', serialNumber)
+    .then(async snapshot => {
+      if (!snapshot.empty) {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'The serial number already exists.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+
+      // Si no existe, agregarlo
+      consumable.SubTotal += 1;
+      this.calculateTotal(consumable);
+
+      this.firebaseService.update(`consumables/${consumable.Id}`, consumable)
+        .then(() => {
+          const newId = this.firebaseService.generateDocId('Numparts');
+
+          const numpart = {
+            id: newId,
+            serialNumber: serialNumber,
+            quantity: 1,
+            consumableId: consumable.Id,
+            consumableName: consumable.Consumable,
+            date: new Date(),
+            user: user
+          };
+
+          this.firebaseService.addToCollection('Numparts', numpart);
+
+          this.firebaseService.setHistory('HistoryC1', {
+            user: user,
+            action: 'add SN',
+            date: new Date(),
+            consumable: consumable,
+            details: `SN: ${serialNumber}, Quantity: 1`
+          });
+
+          this.loadConsumables();
+        })
+        .catch(error => {
+          console.error('Error updating consumable:', error);
+        });
+    });
+}
+handleLendAction(consumable: any, serialNumber: string, reason: string) {
+  const user = this.userService.getUser();
+
+  this.firebaseService.getCollectionWhere('lendSn', 'serialNumber', '==', serialNumber)
+    .then(async snapshot => {
+      if (!snapshot.empty) {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'The serial number already exists.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+
+      // Si no existe, continuar con la operación
+      consumable.SubTotal -= 1;
+      consumable.lend += 1;
+      this.calculateTotal(consumable);
+
+      this.firebaseService.update(`consumables/${consumable.Id}`, consumable)
+        .then(async () => {
+          const newId = this.firebaseService.generateDocId('lendSn');
+
+          const lendSn = {
+            id: newId,
+            serialNumber: serialNumber,
+            quantity: 1,
+            consumableId: consumable.Id,
+            consumableName: consumable.Consumable,
+            date: new Date(),
+            reason: reason,
+            user: user
+          };
+
+          await this.firebaseService.addToCollection('lendSn', lendSn);
+
+          const numpartSnapshot = await this.firebaseService.getCollectionWhere('Numparts', 'serialNumber', '==', serialNumber);
+
+          if (!numpartSnapshot.empty) {
+            numpartSnapshot.forEach(async doc => {
+              await this.firebaseService.deleteFromCollection('Numparts', doc.id);
+            });
+          }
+
+          await this.firebaseService.setHistory('HistoryC1', {
+            user: user,
+            action: 'lend',
+            date: new Date(),
+            consumable: consumable,
+            reason: reason,
+            details: `SN: ${serialNumber}, Reason: ${reason}, Quantity: 1`
+          });
+
+          this.loadConsumables();
+        })
+        .catch(error => {
+          console.error('Error updating consumable:', error);
+        });
+    });
+}
+async handleReplaceAction(consumable: any, serialNumber: string, action: string) {
+  const user = this.userService.getUser();
+
+  try {
+    // Verificar si el serialNumber ya existe en la colección ReplaceActions
+    const replaceSnapshot = await this.firebaseService.getCollectionWhere('ReplaceActions', 'serialNumber', '==', serialNumber);
+
+    if (!replaceSnapshot.empty) {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'The serial number already exists.',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
     }
-    
-    // Recalcular el Total
-    consumable.total = consumable.SubTotal + consumable.lend;
-  
-    // Guardar en la base de datos
-    this.firebaseService.update(`consumables/${consumable.Id}`, consumable).then(() => {
-      this.firebaseService.setHistory('HistoryC1', {
-        user: user,
-        reason: reason,
+
+    // Verificar si el serialNumber existe en la colección lendSn
+    const lendSnSnapshot = await this.firebaseService.getCollectionWhere('lendSn', 'serialNumber', '==', serialNumber);
+
+    if (!lendSnSnapshot.empty) {
+      lendSnSnapshot.forEach(async doc => {
+        await this.firebaseService.deleteFromCollection('lendSn', doc.id);
+      });
+
+      if (consumable.lend > 0) {
+        consumable.lend -= 1;
+      } else {
+        const alert = await this.alertController.create({
+          header: 'Error',
+          message: 'The value of lend cannot be reduced further, it is already 0.',
+          buttons: ['OK']
+        });
+        await alert.present();
+        return;
+      }
+
+      if (action === 'damage') {
+        consumable.damage += 1;
+      } else if (action === 'life') {
+        consumable.life += 1;
+      }
+
+      this.calculateTotal(consumable);
+
+      await this.firebaseService.update(`consumables/${consumable.Id}`, consumable);
+
+      const newId = this.firebaseService.generateDocId('ReplaceActions');
+      const replaceAction = {
+        id: newId,
+        serialNumber: serialNumber,
+        quantity: 1,
+        consumableId: consumable.Id,
+        consumableName: consumable.Consumable,
         date: new Date(),
         action: action,
-        consumable: consumable
+        user: user
+      };
+
+      await this.firebaseService.addToCollection('ReplaceActions', replaceAction);
+
+      await this.firebaseService.setHistory('HistoryC1', {
+        user: user,
+        action: action,
+        date: new Date(),
+        consumable: consumable,
+        details: `SN: ${serialNumber}, Action: ${action}, Quantity: 1`
       });
-      this.loadConsumables();  // Recargar los consumibles para reflejar los cambios
-    }).catch(error => {
-      console.error('Error updating consumable:', error);
-    });
+
+      this.loadConsumables();
+    } else {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'The data does not correspond. Serial number was not found in the collection.',
+        buttons: ['OK']
+      });
+      await alert.present();
+    }
+  } catch (error) {
+    console.error('Error al manejar la acción de reemplazo:', error);
   }
-}  
+}
+updateConsumableQuantity(consumable: any, quantity: number, action: string, reason: string) {
+  const user = this.userService.getUser();
+
+  switch (action) {
+      case 'increment':
+          consumable.SubTotal += quantity;
+          break;
+      case 'lend':
+          consumable.lend -= quantity;
+          consumable.SubTotal += quantity;
+          break;
+      case 'damage':
+          consumable.damage -= quantity;
+          consumable.lend += quantity;
+          break;
+      case 'life':
+          consumable.life -= quantity;
+          consumable.lend += quantity;
+          break;
+  }
+
+  // Recalcular el Total
+  this.calculateTotal(consumable);
+
+  this.firebaseService.update(`consumables/${consumable.Id}`, consumable).then(() => {
+      this.firebaseService.setHistory('HistoryC1', {
+          user: user,
+          reason: reason,
+          date: new Date(),
+          action: action,
+          consumable: consumable
+      });
+      this.loadConsumables();
+  }).catch(error => {
+      console.error('Error updating consumable:', error);
+  });
+}}

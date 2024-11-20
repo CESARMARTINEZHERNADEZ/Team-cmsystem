@@ -1,0 +1,35 @@
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  .modal-header h2 {
+    margin: 0;
+  }
+  
+  .close-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .modal-content {
+    padding: 10px;
+  }
+  
+  .serial-numbers-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .serial-numbers-table th, .serial-numbers-table td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #000000;
+  }

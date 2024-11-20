@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 
 import { ToolsPageRoutingModule } from './tools-routing.module';
+import { LendModalComponent } from '../lend-modal/lend-modal.component';
+
 
 import { ToolsPage } from './tools.page';
 
@@ -15,6 +17,7 @@ import { ToolsPage } from './tools.page';
     IonicModule,
     ToolsPageRoutingModule
   ],
-  declarations: [ToolsPage]
+  declarations: [ToolsPage, LendModalComponent ]
 })
 export class ToolsPageModule {}
+
